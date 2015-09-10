@@ -3,6 +3,7 @@ package xyz.gghost.jskype.api;
 import lombok.Getter;
 import lombok.Setter;
 
+import salt.samczsun.exception.InvalidCredentialsException;
 import xyz.gghost.jskype.api.event.EventManager;
 import xyz.gghost.jskype.exception.FailedToGetProfileException;
 import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
@@ -34,12 +35,12 @@ public class SkypeAPI {
     public boolean displayInfoMessages(){
         return debugMode || basicLogging;
     }
-    public SkypeAPI(String email, String user, String pass) {
+    public SkypeAPI(String email, String user, String pass)throws InvalidCredentialsException, Exception {
         this.skype = new Skype(email, user, pass, this);
         init();
     }
 
-    public SkypeAPI(String user, String pass, boolean multithread) {
+    public SkypeAPI(String user, String pass, boolean multithread) throws InvalidCredentialsException, Exception{
         this.skype = new Skype(user, pass, this);
         if (multithread) {
             new Thread() {
@@ -52,11 +53,11 @@ public class SkypeAPI {
             init();
         }
     }
-    public SkypeAPI(String user, String pass) {
+    public SkypeAPI(String user, String pass) throws InvalidCredentialsException, Exception{
         this.skype = new Skype(user, pass, this);
         init();
     }
-    public SkypeAPI(String email, String user, String pass, boolean multithread) {
+    public SkypeAPI(String email, String user, String pass, boolean multithread)throws InvalidCredentialsException, Exception {
         this.skype = new Skype(email, user, pass, this);
         if (multithread) {
             new Thread() {

@@ -37,7 +37,7 @@ public class GetContactsPacket {
 
         if (a == null) {
 
-            if (api.displayInfoMessages()) {
+            if (api.isDebugMode()) {
                 System.out.println("Failed to request Skype for your contacts.");
                 System.out.println("Code: " + packet.getCode() + "\nData: " + packet.getData() + "\nURL: " + packet.getUrl());
             }

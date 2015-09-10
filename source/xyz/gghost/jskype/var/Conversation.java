@@ -5,14 +5,11 @@ import lombok.Setter;
 import xyz.gghost.jskype.api.Skype;
 import xyz.gghost.jskype.api.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.Group;
-import xyz.gghost.jskype.internal.impl.MessageHistory;
 import xyz.gghost.jskype.internal.packet.packets.PingPrepPacket;
 import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Conversation {
@@ -130,9 +127,11 @@ public class Conversation {
         }
     }
     /** Kick a user from a group - groups only*/
-    public void kick(String username){
+    public boolean kick(String username){
         if (!userChat)
-            getGroup().kick(api, username);
+            return getGroup().kick(api, username);
+
+        return true;
     }
      /**Add a user from a group - groups only*/
     public void add(String username){
@@ -140,9 +139,10 @@ public class Conversation {
             getGroup().add(api, username);
     }
      /** Kick a user from a group - groups only */
-    public void kick(User username){
+    public boolean kick(User username){
         if (!userChat)
-            getGroup().kick(api, username);
+            return getGroup().kick(api, username);
+        return true;
     }
     /** Add a user from a group - groups only*/
     public void add(User username){

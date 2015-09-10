@@ -47,7 +47,6 @@ public class GroupInfoPacket {
         String data = members.makeRequest(skype);
 
         if (data == null) {
-            System.out.println("IS FUCKING NULL " + longId + members.getCode() + members.getData());
             return null;
         }
 

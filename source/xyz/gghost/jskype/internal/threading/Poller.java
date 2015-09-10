@@ -87,10 +87,7 @@ public class Poller extends Thread {
 
                         String shortId = object.getString("resourceLink").split("19:")[1].split("@")[0];
                         for (Conversation groups : usr.getConversations()) {
-                            if (groups.getId().equals(shortId)) {
-                                System.out.println(groups);
-                                System.out.println(groups.getGroup().getConnectedClients());
-                                for (GroupUser usr : groups.getGroup().getConnectedClients()) { //NULL POINTER HERE
+                            if (groups.getId().equals(shortId)) {for (GroupUser usr : groups.getGroup().getConnectedClients()) { //NULL POINTER HERE
                                     oldUsers.add(usr.getAccount().getUsername().toLowerCase());
                                     oldUsers2.add(usr.getAccount().getUsername().toLowerCase());
                                 }

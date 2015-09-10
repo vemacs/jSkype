@@ -26,7 +26,7 @@ being kept and will be receivable by the Conversation#getGroup method.
 Near enough 2.0:
 Legacy methods have been removed. This class will now serve as an impl version of Conversation
  */
-public class Group {
+public class Group{
     private ArrayList<GroupUser> connectedClients = new ArrayList<GroupUser>();
     private String topic = "NPE";
     private String chatId = "";

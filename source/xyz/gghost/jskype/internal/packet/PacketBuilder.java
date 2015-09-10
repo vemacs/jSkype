@@ -79,7 +79,11 @@ public class PacketBuilder {
             } else {
                 if (code == 404 && url.toLowerCase().contains("endpoint")) {
                     System.out.println("Lost connection to skype.\nReloggin!");
-                    api.getSkype().relog();
+                    try {
+                        api.getSkype().relog();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                     api.getPoller().prepare();
                 }
                 if (api.isDebugMode()) {

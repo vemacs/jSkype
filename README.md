@@ -45,7 +45,7 @@ Dependency:
 <dependency>
   <groupId>xyz.gghost</groupId>
   <artifactId>jskype</artifactId>
-  <version>2.17-BETA</version>
+  <version>2.18-BETA</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -65,7 +65,7 @@ If getting groups is taking a while, you can add another boolean to enable exper
 #Where are all the methods?
 jSkype is split up into two main classes; Skype and SkypeAPI. SkypeAPI is mainly useless, however it contains the Skype instance, which is where the recent groups, contacts, send messages, etc is hold. Checking the JavaDocs would help out, but it's safe to assume most of what you'll want is in SkypeAPI#getSkype (Skype)
 
-API Related (event listeners, command handlers, LocalAccount instance, etc): SkypeAPI
+API Related (event listeners, command handlers, Skype instance, etc): SkypeAPI
 
 User related (contact requests, active groups, contacts, login, etc): Skype
 #Sending chat messages
