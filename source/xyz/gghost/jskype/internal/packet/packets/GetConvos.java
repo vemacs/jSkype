@@ -52,7 +52,11 @@ public class GetConvos {
                 } else {
                     String id = recent.getString("id");
                     if (id.endsWith("@thread.skype"))
-                        groups.add(new GroupInfoPacket(api, usr).getConvo(id));
+                        try {
+                            groups.add(new GroupInfoPacket(api, usr).getConvo(id));
+                        }catch (Exception e){
+                            System.out.println("Failed to get convo " + id);
+                        }
                 }
             }
             return groups;

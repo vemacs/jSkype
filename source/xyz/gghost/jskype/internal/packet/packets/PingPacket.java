@@ -24,7 +24,6 @@ public class PingPacket {
                 System.out.println("Skype login expired... Reconnecting");
             try {
                 api.getSkype().relog();
-                api.getPoller().prepare();
             }catch(Exception e){
                 if (api.displayInfoMessages())
                   System.out.println("Failed to reconnect. ?");

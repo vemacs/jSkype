@@ -53,7 +53,7 @@ public class GroupInfoPacket {
         String id = new JSONObject(data).getString("id").split(":")[1].split("@")[0];
 
         Group group = new Group(id, "", null);
-
+        group.setChatId(id);
         JSONObject properties = new JSONObject(data).getJSONObject("properties");
         if (!properties.isNull("topic"))
             group.setTopic(properties.getString("topic"));

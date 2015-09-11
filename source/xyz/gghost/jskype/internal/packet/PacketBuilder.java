@@ -23,12 +23,14 @@ public class PacketBuilder {
     @Getter @Setter protected boolean sendLoginHeaders = true;
     @Getter @Setter protected boolean file = false;
     @Getter @Setter protected int code = 200;
+    @Getter @Setter protected String cookies = "";
     public PacketBuilder(SkypeAPI api) {
         this.api = api;
     }
 
     @Deprecated
-    public void addLogin(Skype usr) {
+    protected void addLogin(Skype usr) {
+
         addHeader(new Header("RegistrationToken", usr.getRegToken()));
         addHeader(new Header("X-Skypetoken", usr.getXSkypeToken()));
     }
@@ -46,7 +48,8 @@ public class PacketBuilder {
             con.setRequestProperty("Content-Type", isForm ? "application/x-www-form-urlencoded" : (file ? "application/octet-stream" : "application/json; charset=utf-8"));
             con.setRequestProperty("Content-Length", Integer.toString(data.getBytes().length));
             con.setRequestProperty("User-Agent", "0/7.7.0.103// libhttpX.X");
-            con.setRequestProperty("Cookie", api.cookies);
+            if (!cookies.equals(""))
+                con.setRequestProperty("Cookie", cookies);
             con.setDoOutput(true);
             if (sendLoginHeaders)
                 addLogin(usr);
@@ -84,7 +87,6 @@ public class PacketBuilder {
                     }catch(Exception e){
                         e.printStackTrace();
                     }
-                    api.getPoller().prepare();
                 }
                 if (api.isDebugMode()) {
                     if (!api.isStfuMode()) {

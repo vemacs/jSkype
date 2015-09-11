@@ -3,9 +3,11 @@ package xyz.gghost.jskype.api;
 import lombok.Getter;
 import lombok.Setter;
 
-import salt.samczsun.exception.InvalidCredentialsException;
 import xyz.gghost.jskype.api.event.EventManager;
+import xyz.gghost.jskype.exception.BadResponseException;
+import xyz.gghost.jskype.exception.BadUsernamePassword;
 import xyz.gghost.jskype.exception.FailedToGetProfileException;
+import xyz.gghost.jskype.exception.FailedToLoginException;
 import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
 import xyz.gghost.jskype.internal.threading.*;
 import xyz.gghost.jskype.internal.impl.Group;
@@ -35,41 +37,25 @@ public class SkypeAPI {
     public boolean displayInfoMessages(){
         return debugMode || basicLogging;
     }
-    public SkypeAPI(String email, String user, String pass)throws InvalidCredentialsException, Exception {
-        this.skype = new Skype(email, user, pass, this);
+
+    public SkypeAPI(String user, String pass, boolean multithread) throws Exception{
+        this.skype = new Skype(user, pass, this);
+        if (multithread) {
+            new Thread() {
+                @Override
+                public void run(){
+                    init();
+                }
+            }.start();
+        }else{
+            init();
+        }
+    }
+    public SkypeAPI(String user, String pass) throws Exception{
+        this.skype = new Skype(user, pass, this);
         init();
     }
 
-    public SkypeAPI(String user, String pass, boolean multithread) throws InvalidCredentialsException, Exception{
-        this.skype = new Skype(user, pass, this);
-        if (multithread) {
-            new Thread() {
-                @Override
-                public void run(){
-                    init();
-                }
-            }.start();
-        }else{
-            init();
-        }
-    }
-    public SkypeAPI(String user, String pass) throws InvalidCredentialsException, Exception{
-        this.skype = new Skype(user, pass, this);
-        init();
-    }
-    public SkypeAPI(String email, String user, String pass, boolean multithread)throws InvalidCredentialsException, Exception {
-        this.skype = new Skype(email, user, pass, this);
-        if (multithread) {
-            new Thread() {
-                @Override
-                public void run(){
-                    init();
-                }
-            }.start();
-        }else{
-            init();
-        }
-    }
 
     private void init() {
         //ORDER IS FOR A REASON

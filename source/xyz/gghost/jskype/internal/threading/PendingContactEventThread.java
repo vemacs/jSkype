@@ -40,9 +40,7 @@ public class PendingContactEventThread extends Thread {
                 }
             } catch (NoPendingContactsException e){
             } catch (BadResponseException e){
-                System.out.println("ATTENTION: FAILED TO GET PENDING CONTACTS DUE TO 500 / NULL DATA");
-                System.out.println("MAY TAKE AN HOUR TO RECOVER - SKYPE BUG");
-                System.out.println("RESTART WOULD FIX THIS BUT IT'S NOT CONFIRMED TO DO SO");
+                //Lost internet connection!
             } catch (Exception e){
                 e.printStackTrace();
             }

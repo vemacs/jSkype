@@ -21,10 +21,9 @@ public class Poller extends Thread {
 
     private SkypeAPI api;
     private Skype usr;
-    private String url;
     private String endpoint;
     private PacketBuilder packet;
-
+    private boolean dontTry = false;
 
     public Poller(SkypeAPI api, Skype usr) {
         this.api = api;
@@ -33,20 +32,24 @@ public class Poller extends Thread {
 
     @Override
     public void run() {
-        prepare();
         while (this.isAlive()) {
             poll();
         }
     }
 
     public void poll() {
+        if (dontTry)
+            return;
+
+
         PacketBuilder poll = new PacketBuilder(api);
         poll.setType(RequestType.POST);
-        poll.setUrl("https://" + url + "/v1/users/ME/endpoints/SELF/subscriptions/0/poll");
+        poll.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/endpoints/SELF/subscriptions/0/poll");
         poll.setData(" ");
         String data = poll.makeRequest(usr);
         if (data == null || data.equals("") || data.equals("{}"))
             return;
+
 
         JSONObject messagesAsJson = new JSONObject(data);
         JSONArray json = messagesAsJson.getJSONArray("eventMessages");
@@ -265,58 +268,6 @@ public class Poller extends Thread {
         usr.getConversations().add(new GroupInfoPacket(api, usr).getConvo(idLong));
     }
 
-    //Old auth code
-    public void prepare() {
-        login();
-        if (!reg()) {
-            System.out.println("Failed to get update data from skype due to a login error... Attempting to relogin, however this wont work until the auto pinger kicks in.");
-            login();
-            try {
-                Thread.sleep(1750);
-                prepare();
-            } catch (InterruptedException e) {}
-        }
-        save();
-    }
 
-
-    public void login() {
-        url = location().split("://")[1].split("/")[0];
-        usr.setRegToken(packet.getCon().getHeaderField("Set-RegistrationToken").split(";")[0]);
-        endpoint = packet.getCon().getHeaderField("Set-RegistrationToken").split(";")[2].split("=")[1];
-    }
-
-    public boolean save() {
-        String id = "{\"id\":\"messagingService\",\"type\":\"EndpointPresenceDoc\",\"selfLink\":\"uri\",\"publicInfo\":{\"capabilities\":\"video|audio\",\"type\":\"1\",\"skypeNameVersion\":\"skype.com\",\"nodeInfo\":\"2\",\"version\":\"2\"},\"privateInfo\":{\"epname\":\"Skype\"}}";
-        PacketBuilder packet = new PacketBuilder(api);
-        packet.setType(RequestType.PUT);
-        packet.setData(id);
-        packet.setUrl("https://" + url + "/v1/users/ME/endpoints/" + endpoint + "/presenceDocs/messagingService");
-        return packet.makeRequest(usr) != null;
-    }
-
-    public boolean reg() {
-        PacketBuilder packet = new PacketBuilder(api);
-        String id = "{\"channelType\":\"httpLongPoll\",\"template\":\"raw\",\"interestedResources\":[\"/v1/users/ME/conversations/ALL/properties\",\"/v1/users/ME/conversations/ALL/messages\",\"/v1/users/ME/contacts/ALL\",\"/v1/threads/ALL\"]}";
-        packet.setData(id);
-        packet.setType(RequestType.POST);
-        packet.setUrl("https://" + url + "/v1/users/ME/endpoints/SELF/subscriptions");
-        return packet.makeRequest(usr) != null;
-    }
-
-    public String location() {
-        packet = new PacketBuilder(api);
-        packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/endpoints");
-        packet.setType(RequestType.POST);
-        packet.setData("{}");
-        String data = packet.makeRequest(usr);
-        if (data == null) {
-            //I have no fucking clue how to handle this. Crash application may be feasible but then after two days it might crash for no reason :/
-            System.out.println("Null on location getter");
-            System.exit(-1);
-
-        }
-        return packet.getCon().getHeaderField("Location");
-    }
 
 }

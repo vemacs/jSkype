@@ -4,12 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import salt.samczsun.SkypeAuthentication;
-import salt.samczsun.exception.ConnectionException;
-import salt.samczsun.exception.InvalidCredentialsException;
-import xyz.gghost.jskype.exception.AccountUnusableForRecentException;
-import xyz.gghost.jskype.exception.BadResponseException;
-import xyz.gghost.jskype.exception.NoPendingContactsException;
+import xyz.gghost.jskype.auth.SkypeAuthentication;
+import xyz.gghost.jskype.exception.*;
 import xyz.gghost.jskype.var.MessageHistory;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
@@ -34,9 +30,6 @@ public class Skype {
     private SkypeAPI api;
     @Getter
     @Setter
-    private String email;
-    @Getter
-    @Setter
     private String username;
     @Getter
     private String password;
@@ -46,6 +39,9 @@ public class Skype {
     @Getter
     @Setter
     private String regToken;
+    @Getter
+    @Setter
+    private String endPoint;
     @Setter
     private ArrayList<User> contactCache = new ArrayList<User>();
     @Setter
@@ -53,23 +49,14 @@ public class Skype {
     @Getter
     private HashMap<String, MessageHistory> history = new HashMap<String, MessageHistory>();
 
-    public Skype(String username, String password, SkypeAPI api) throws InvalidCredentialsException, Exception{
-        this.username = username;
-        this.email = username;
-        this.password = password;
-        this.api = api;
-        init();
-    }
-
-    public Skype(String email, String username, String password, SkypeAPI api) throws InvalidCredentialsException, Exception{
-        this.email = email;
+    public Skype(String username, String password, SkypeAPI api) throws BadUsernamePassword, Exception{
         this.username = username;
         this.password = password;
         this.api = api;
         init();
     }
 
-    private void init() throws InvalidCredentialsException, Exception{
+    private void init() throws BadUsernamePassword, Exception{
 
         if (api.displayInfoMessages())
             System.out.println("API> Logging in");
@@ -103,22 +90,25 @@ public class Skype {
     /**
      * Login
      */
-    public void relog() throws InvalidCredentialsException, Exception{
+    public void relog() throws BadResponseException, Exception{
         try {
             new SkypeAuthentication().login(api, this);
-        } catch (InvalidCredentialsException e) {
+        } catch (BadUsernamePassword e) {
             if (api.displayInfoMessages())
                 System.out.println("API> Bad username + password");
             throw e;
-        } catch(ConnectionException e) {
+        } catch(BadResponseException e) {
             e.printStackTrace();
             System.out.println("API> Failed to connect to the internet... Retying in 5 secs");
             try {
                 Thread.sleep(5000);
             }catch(InterruptedException ee){}
             relog();
+        } catch (RecaptchaException e) {
+            if (api.displayInfoMessages())
+                System.out.println("API> Failed to login due to a recaptcha!");
+            throw e;
         } catch (Exception e) {
-            e.printStackTrace();
             if (api.displayInfoMessages())
                 System.out.println("API> Failed to login!");
             throw e;

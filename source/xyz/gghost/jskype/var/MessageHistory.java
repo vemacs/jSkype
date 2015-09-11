@@ -58,9 +58,12 @@ public class MessageHistory {
 
         JSONObject json = new JSONObject(data);
 
-        if (!json.getJSONObject("_metadata").isNull("syncState"))
-            this.nextUrl = json.getJSONObject("_metadata").getString("syncState");
-
+        try {
+            if (!json.getJSONObject("_metadata").isNull("syncState"))
+                this.nextUrl = json.getJSONObject("_metadata").getString("syncState");
+        }catch(Exception e){
+            //out of pages
+        }
 
         JSONArray jsonArray = json.getJSONArray("messages");
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -96,9 +99,7 @@ public class MessageHistory {
     }
     private User getUser(String username, Conversation chat) {
         User user = null;
-        //get user from contacts
         user = skype.getContact(username);
-        //get user from connected clients
         if (user == null) {
             try {
                 for (GroupUser users : chat.getConnectedClients()) {
@@ -107,7 +108,6 @@ public class MessageHistory {
                 }
             } catch (NullPointerException e) {}
         }
-        //If failed to get user - get the users info by calling skypes api
         if (user == null)
             user = skype.getSimpleUser(username);
         return user;
