@@ -137,13 +137,13 @@ public class Poller extends Thread {
 
                             for (String old : oldUsers) {
                                 if (!old.equals("live"))
-                                    api.getEventManager().executeEvent(new UserLeaveEvent(chat, new GetProfilePacket(api, usr).getUser(old)));
+                                    api.getEventManager().executeEvent(new UserLeaveEvent(newConvo, new GetProfilePacket(api, usr).getUser(old)));
                                 if (!api.isDebugMode())
                                     return;
                             }
                             for (String news : newUsers) {
                                 if (!news.equals("live"))
-                                 api.getEventManager().executeEvent(new UserJoinEvent(chat, new GetProfilePacket(api, usr).getUser(news)));
+                                 api.getEventManager().executeEvent(new UserJoinEvent(newConvo, new GetProfilePacket(api, usr).getUser(news)));
                                 if (!api.isDebugMode())
                                     return;
                             }

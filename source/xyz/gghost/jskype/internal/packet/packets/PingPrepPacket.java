@@ -67,7 +67,7 @@ public class PingPrepPacket {
         packet.setUrl("https://api.asm.skype.com/v1/objects");
         packet.setData(" ");
         packet.setSendLoginHeaders(false); //Disable skype for web authentication
-        packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getXSkypeToken())); //Use the windows client login style 
+        packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getLoginTokens().getXToken()));  //Use the windows client login style
         packet.setType(RequestType.POST);
         String data = packet.makeRequest(api.getSkype());
         if (data == null)
@@ -83,7 +83,7 @@ public class PingPrepPacket {
             packet.setData("{\"8:" + shortId + "\":[\"read\"]}");
         }
         packet.setSendLoginHeaders(false); //Disable skype for web authentication
-        packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getXSkypeToken())); //Use the windows client login style 
+        packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getLoginTokens().getXToken()));  //Use the windows client login style
         packet.setType(RequestType.PUT);
         String data = packet.makeRequest(api.getSkype());
         return data != null;
@@ -98,7 +98,7 @@ public class PingPrepPacket {
             packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/content/imgpsh");
             packet.setSendLoginHeaders(false); //Disable skype for web authentication
             packet.setFile(true);
-            packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getXSkypeToken())); //Use the windows client login style 
+            packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getLoginTokens().getXToken())); //Use the windows client login style
             packet.setType(RequestType.PUT);
 
             String dataS = packet.makeRequest(api.getSkype(), data);
@@ -119,7 +119,7 @@ public class PingPrepPacket {
             packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/content/imgpsh");
             packet.setSendLoginHeaders(false); //Disable skype for web authentication
             packet.setFile(true);
-            packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getXSkypeToken())); //Use the windows client login style
+            packet.addHeader(new Header("Authorization", "skype_token " + api.getSkype().getLoginTokens().getXToken())); //Use the windows client login style
             packet.setType(RequestType.PUT);
 
             String dataS = packet.makeRequest(api.getSkype(), data);

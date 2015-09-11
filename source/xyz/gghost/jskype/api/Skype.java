@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import xyz.gghost.jskype.auth.SkypeAuthentication;
+import xyz.gghost.jskype.internal.auth.SkypeAuthentication;
 import xyz.gghost.jskype.exception.*;
 import xyz.gghost.jskype.var.MessageHistory;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
@@ -18,6 +18,7 @@ import xyz.gghost.jskype.var.Conversation;
 import xyz.gghost.jskype.internal.impl.Group;
 import xyz.gghost.jskype.var.LocalAccount;
 import xyz.gghost.jskype.var.User;
+import xyz.gghost.jskype.var.LoginToken;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -35,13 +36,7 @@ public class Skype {
     private String password;
     @Getter
     @Setter
-    private String xSkypeToken;
-    @Getter
-    @Setter
-    private String regToken;
-    @Getter
-    @Setter
-    private String endPoint;
+    private LoginToken loginTokens = new LoginToken();
     @Setter
     private ArrayList<User> contactCache = new ArrayList<User>();
     @Setter

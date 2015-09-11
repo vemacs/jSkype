@@ -30,11 +30,18 @@ public class GroupInfoPacket {
         this.api = api;
     }
     public Conversation getConvo(String longId){
-        Group group = getGroup(longId);
-        Conversation theChat = new Conversation(api, group.getChatId(), true);
-        theChat.setForcedGroup(true);
-        theChat.setForcedGroupGroup(group);
-        return theChat;
+        try {
+            Group group = getGroup(longId);
+            Conversation theChat = new Conversation(api, group.getChatId(), true);
+            theChat.setForcedGroup(true);
+            theChat.setForcedGroupGroup(group);
+            return theChat;
+        }catch(NullPointerException e){
+            Conversation convo = skype.getConvoByShortId(longId.split("19:")[1].split("@")[0]);
+            if (convo == null)
+                throw e;
+            return convo;
+        }
     }
 
     public Group getGroup(String longId){

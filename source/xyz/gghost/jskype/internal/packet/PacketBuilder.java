@@ -31,8 +31,8 @@ public class PacketBuilder {
     @Deprecated
     protected void addLogin(Skype usr) {
 
-        addHeader(new Header("RegistrationToken", usr.getRegToken()));
-        addHeader(new Header("X-Skypetoken", usr.getXSkypeToken()));
+        addHeader(new Header("RegistrationToken", usr.getLoginTokens().getReg()));
+        addHeader(new Header("X-Skypetoken", usr.getLoginTokens().getXToken()));
     }
 
     public void addHeader(Header header) {
