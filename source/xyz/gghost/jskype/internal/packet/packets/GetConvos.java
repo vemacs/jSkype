@@ -26,12 +26,6 @@ public class GetConvos {
         try {
             ArrayList<Conversation> groups = new ArrayList<Conversation>();
 
-            PacketBuilder options = new PacketBuilder(api);
-            options.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/conversations?startTime=0&pageSize=200&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread");
-            options.setData("");
-            options.setType(RequestType.OPTIONS);
-            options.makeRequest(usr);
-
             PacketBuilder packet = new PacketBuilder(api);
             packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/conversations?startTime=0&pageSize=200&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread");
             packet.setData("");
@@ -43,7 +37,6 @@ public class GetConvos {
                 throw new AccountUnusableForRecentException();
 
             JSONArray jsonArray = new JSONObject(data).getJSONArray("conversations");
-
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject recent = jsonArray.getJSONObject(i);
 
@@ -51,12 +44,15 @@ public class GetConvos {
                     groups.add(new Conversation(api, recent.getString("id").split("8:")[1], false));
                 } else {
                     String id = recent.getString("id");
-                    if (id.endsWith("@thread.skype"))
+                    //Old skype for web bug
+                    if (id.endsWith("@thread.skype")) {
                         try {
                             groups.add(new GroupInfoPacket(api, usr).getConvo(id));
-                        }catch (Exception e){
-                            System.out.println("Failed to get convo " + id);
+                        } catch (Exception e) {
+                            if (api.displayInfoMessages())
+                                System.out.println("WArn: Failed to get convo " + id + " due to rate limiting!");
                         }
+                    }
                 }
             }
             return groups;

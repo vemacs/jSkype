@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 public class LoginToken {
     private String XToken;
-    private String Reg;
+    private String reg;
     private String endPoint;
 }

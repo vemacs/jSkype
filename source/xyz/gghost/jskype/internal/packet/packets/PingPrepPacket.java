@@ -112,10 +112,10 @@ public class PingPrepPacket {
     }
     public boolean writeData(String id, File url){
         try {
-
             InputStream data = new FileInputStream(url);
 
             PacketBuilderUploader packet = new PacketBuilderUploader(api);
+
             packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/content/imgpsh");
             packet.setSendLoginHeaders(false); //Disable skype for web authentication
             packet.setFile(true);
@@ -123,8 +123,10 @@ public class PingPrepPacket {
             packet.setType(RequestType.PUT);
 
             String dataS = packet.makeRequest(api.getSkype(), data);
+
             if (dataS == null)
                 return false;
+
         }catch (Exception e){
             e.printStackTrace();
             return false;

@@ -45,7 +45,7 @@ Dependency:
 <dependency>
   <groupId>xyz.gghost</groupId>
   <artifactId>jskype</artifactId>
-  <version>2.20-BETA</version>
+  <version>2</version>
   <scope>compile</scope>
 </dependency>
 ```

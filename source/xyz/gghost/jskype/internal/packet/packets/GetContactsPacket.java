@@ -32,21 +32,15 @@ public class GetContactsPacket {
         packet.setType(RequestType.OPTIONS);
         packet.getData();
         packet.setType(RequestType.GET);
-
         String a = packet.makeRequest(usr);
-
         if (a == null) {
-
             if (api.isDebugMode()) {
                 System.out.println("Failed to request Skype for your contacts.");
                 System.out.println("Code: " + packet.getCode() + "\nData: " + packet.getData() + "\nURL: " + packet.getUrl());
             }
-
             if (usr.getContacts().size() == 0)
                 usr.getContacts().add(api.getSkype().getSimpleUser(usr.getUsername()));
-
             return;
-
         }
         try {
             JSONObject jsonObject = new JSONObject(a);
@@ -57,7 +51,7 @@ public class GetContactsPacket {
             }
             contacts = new GetProfilePacket(api, usr).getUsers(usernames);
             if (contacts != null) {
-                ArrayList<User> value = new ArrayList<User>();
+                usr.getContacts().clear();
                 for (User user : contacts) {
                     user.setContact(true);
                     usr.getContacts().add(user);
