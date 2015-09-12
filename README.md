@@ -134,3 +134,5 @@ public class Test {
 - jsoup (repo contains sams authenticator)
 - lombok
 
+#LICENSE
+See LICENSE file 
