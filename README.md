@@ -131,7 +131,7 @@ public class Test {
 #Dependencies
 - commons-lang 3
 - org.json (repo contains fork)
-- jsoup (repo contains sams authenticator)
+- jsoup 
 - lombok
 
 #LICENSE
