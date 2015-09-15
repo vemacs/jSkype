@@ -72,13 +72,13 @@ User related (contact requests, active groups, contacts, login, etc): Skype
 Sending a message to all contacts example:
 ```java
 for (User user : skype.getSkype().getContacts()){
-  user.sendMessage(skype, "Hi");
+  user.sendMessage("Hi");
 }
 ```
 Sending a message to all recent groups and contacts example:
 ```java
 for (Conversation group : skype.getSkype().getRecent()){
-  group.sendMessage(skype, "Hi");
+  group.sendMessage("Hi");
 }
 ```
 Editing a message:
