@@ -1,3 +1,5 @@
+#Recoded... Having issues? use version 2 (https://github.com/GhostSkype/jSkype)
+
 # jSkype
 jSkype creation started when skype4web was released, however at the time I was making a private Skype client in Java, not an API. Samczsun, better known as super salter 9000 was creating an extremely limited api at the time of my client creation and still is today. In order to spare people from his limited api, I'm releasing jSkype. 
 
@@ -45,39 +47,30 @@ Dependency:
 <dependency>
   <groupId>xyz.gghost</groupId>
   <artifactId>jskype</artifactId>
-  <version>2</version>
+  <version></version>
   <scope>compile</scope>
 </dependency>
 ```
 
 #Creating a skype instance
-Before creating a Skype instance, you'll need to confirm whether or not you login with an email/pass or user/pass. If you login with a username and password, you can create a new instance of SkypeAPI with the arguments (username, password), otherwise people with email logins should pass (email, username, password)
+Before creating a Skype instance, you'll need to confirm whether or not you login with an email/pass or user/pass. If you login with a username and password, you can create a new instance of SkypeAPI with the arguments (username, password).
 
 Example user/pass: 
 ```java
 SkypeAPI skype = new SkypeAPI("NotGhostBot", "Password");
 ```
-Example email/pass: 
-```java
-SkypeAPI skype = new SkypeAPI("ghost@ghosted.me", "NotGhostBot", "Password");
-```
 If getting groups is taking a while, you can add another boolean to enable experimental multithreading. It isn't recommended but is useful in bot environments
-#Where are all the methods?
-jSkype is split up into two main classes; Skype and SkypeAPI. SkypeAPI is mainly useless, however it contains the Skype instance, which is where the recent groups, contacts, send messages, etc is hold. Checking the JavaDocs would help out, but it's safe to assume most of what you'll want is in SkypeAPI#getSkype (Skype)
 
-API Related (event listeners, command handlers, Skype instance, etc): SkypeAPI
-
-User related (contact requests, active groups, contacts, login, etc): Skype
 #Sending chat messages
 Sending a message to all contacts example:
 ```java
-for (User user : skype.getSkype().getContacts()){
-  user.sendMessage("Hi");
+for (User user : skype.getContacts()){
+  user.getGroup().sendMessage("Hi");
 }
 ```
 Sending a message to all recent groups and contacts example:
 ```java
-for (Conversation group : skype.getSkype().getRecent()){
+for (Group group : skype.getGroups()){
   group.sendMessage("Hi");
 }
 ```
