@@ -1,0 +1,42 @@
+package xyz.gghost.jskype.internal.message;
+
+import lombok.Data;
+import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
+import xyz.gghost.jskype.internal.user.User;
+
+@Data
+public class Message {
+
+    private User sender;
+    private String message;
+    private String updateUrl;
+    private boolean edited = false;
+    private String time;
+    private String id;
+
+    public Message(String message) {
+        this.message = message;
+    }
+
+    public Message() {}
+
+
+    /**
+     * Edit the message
+     */
+    public Message editMessage(SkypeAPI api, String message){
+        setMessage(message);
+        edited = true;
+        return new SendMessagePacket(api).editMessage(this);
+    }
+    /**
+     * Once setMessage has edited the message locally, this will update the edit on skypes servers
+     * @param api SkypeAPI
+     * @return the message
+     */
+    public Message updateEdit(SkypeAPI api) {
+        edited = true;
+        return new SendMessagePacket(api).editMessage(this);
+    }
+}
