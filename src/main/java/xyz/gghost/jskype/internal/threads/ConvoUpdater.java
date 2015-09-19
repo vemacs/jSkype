@@ -19,6 +19,7 @@ public class ConvoUpdater extends Thread{
             try {
                 if (!groupFail) {
                     new GetConvos(api).setupRecent();
+                    api.setLoaded(true);
                 }
             } catch (AccountUnusableForRecentException e) {
                 if (first)

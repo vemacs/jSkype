@@ -21,7 +21,12 @@ import java.util.List;
  */
 public class GroupImpl implements Group {
 
-    public MessageHistory getMessageHistory(SkypeAPI api){
+    @Setter @Getter private String topic;
+    @Setter @Getter private String id;
+    @Setter @Getter private String pictureUrl;
+    private SkypeAPI api;
+
+    public MessageHistory getMessageHistory(){
         if(api.getA().containsKey(id))
             return api.getA().get(id);
         MessageHistory history = new MessageHistory(id, api);
@@ -29,10 +34,6 @@ public class GroupImpl implements Group {
         return history;
     }
 
-    @Setter @Getter private String topic;
-    @Setter @Getter private String id;
-    @Setter @Getter private String pictureUrl;
-    private SkypeAPI api;
     @Getter private List<GroupUser> clients = new ArrayList<GroupUser>();
     public GroupImpl(SkypeAPI api, String longId){
         this.id = longId;
@@ -72,5 +73,11 @@ public class GroupImpl implements Group {
     }
     public String getTopic() {
         return topic;
+    }
+    public boolean isUserChat(){
+        return !getLongId().contains("19:");
+    }
+    public void leave(){
+        kick(api.getUsername());
     }
 }

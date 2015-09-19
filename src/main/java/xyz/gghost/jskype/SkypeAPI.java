@@ -39,7 +39,8 @@ public class SkypeAPI {
     @Getter private String username;
     @Getter UUID uuid = UUID.randomUUID();
     @Getter private String password;
-    @Getter private Poller poller;
+    @Getter @Setter private boolean loaded;
+    private Poller poller;
     private Thread contactUpdater;
     private Thread pinger;
     private ConvoUpdater convoUpdater;

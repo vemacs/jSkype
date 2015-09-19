@@ -3,7 +3,7 @@ package xyz.gghost.jskype.internal.user;
 import lombok.Data;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.impl.NonContactGroupImpl;
+import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
 
 @Data
 public class User {
@@ -27,6 +27,6 @@ public class User {
         api.sendContactRequest(username, hello);
     }
     public Group getGroup(SkypeAPI api){
-        return new NonContactGroupImpl(api, "8:" + username);
+        return new ContactGroupImpl(api, "8:" + username);
     }
 }

@@ -4,13 +4,9 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.exception.AccountUnusableForRecentException;
-import xyz.gghost.jskype.internal.impl.GroupImpl;
-import xyz.gghost.jskype.internal.impl.NonContactGroupImpl;
+import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
-
-
-import java.util.List;
 
 public class GetConvos {
     private SkypeAPI api;
@@ -37,7 +33,7 @@ public class GetConvos {
                 JSONObject recent = jsonArray.getJSONObject(i);
 
                 if (recent.getString("targetLink").contains("/contacts/8:")) {
-                    api.updateGroup(new NonContactGroupImpl(api, recent.getString("id")));
+                    api.updateGroup(new ContactGroupImpl(api, recent.getString("id")));
                 } else {
                     String id = recent.getString("id");
                     //Old skype for web bug

@@ -5,7 +5,7 @@ import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.events.*;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
-import xyz.gghost.jskype.internal.impl.NonContactGroupImpl;
+import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
 import xyz.gghost.jskype.internal.message.Message;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
@@ -59,7 +59,7 @@ public class Poller extends Thread {
                             chat = api.getGroupById(idShort);
                             //Old skype for web bug that affects some users
                         } else if (!object.getString("resourceLink").contains("@")){
-                            chat = new NonContactGroupImpl(api, "8:" + object.getString("resourceLink").split("/8:")[1].split("/")[0]);
+                            chat = new ContactGroupImpl(api, "8:" + object.getString("resourceLink").split("/8:")[1].split("/")[0]);
                         }
                     } else {
                         //api.log("Non-group data received from skype. This is ignorable.");
@@ -88,9 +88,8 @@ public class Poller extends Thread {
 
                             JSONObject resource = object.getJSONObject("resource");
 
-                            String topic = oldGroup.getTopic();
+                            String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
                             String picture = resource.getJSONObject("properties").isNull("picture") ? "" : resource.getJSONObject("properties").getString("picture");
-
                             GroupImpl group = null;
                             group.setPictureUrl(picture);
                             group.setTopic(topic);
