@@ -58,6 +58,7 @@ Before creating a Skype instance, you'll need to confirm whether or not you logi
 Example user/pass: 
 ```java
 SkypeAPI skype = new SkypeAPI("NotGhostBot", "Password");
+skype.login();
 ```
 If getting groups is taking a while, you can add another boolean to enable experimental multithreading. It isn't recommended but is useful in bot environments
 
