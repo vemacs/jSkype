@@ -53,16 +53,12 @@ public class ContactGroupImpl extends GroupImpl implements Group {
     }
     public String getTopic() {
         return getUsername();
-    }  public boolean isAdmin() {
-        for (GroupUser user : getClients())
-            if (user.getUser().getUsername().equals(api.getUsername()) && user.role.equals(GroupUser.Role.MASTER))
-                return true;
+    }
+    public boolean isAdmin() {
         return false;
     }
+
     public boolean isAdmin(String usr) {
-        for (GroupUser user : getClients())
-            if (user.getUser().getUsername().equals(usr) && user.role.equals(GroupUser.Role.MASTER))
-                return true;
         return false;
     }
 }

@@ -82,10 +82,15 @@ public class GroupImpl implements Group {
     }
 
     public boolean isAdmin() {
+        for (GroupUser user : getClients())
+            if (user.getUser().getUsername().equals(api.getUsername()) && user.role.equals(GroupUser.Role.MASTER))
+                return true;
         return false;
     }
-
     public boolean isAdmin(String usr) {
+        for (GroupUser user : getClients())
+            if (user.getUser().getUsername().equals(usr) && user.role.equals(GroupUser.Role.MASTER))
+                return true;
         return false;
     }
 }
