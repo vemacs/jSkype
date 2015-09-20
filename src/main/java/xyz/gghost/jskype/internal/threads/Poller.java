@@ -90,7 +90,7 @@ public class Poller extends Thread {
 
                             String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
                             String picture = resource.getJSONObject("properties").isNull("picture") ? "" : resource.getJSONObject("properties").getString("picture");
-                            GroupImpl group = null;
+                            GroupImpl group = new GroupImpl(api, topic);
                             group.setPictureUrl(picture);
                             group.setTopic(topic);
                             //user join/leave events
