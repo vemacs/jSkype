@@ -2,7 +2,7 @@ package xyz.gghost.jskype.internal.threads;
 
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.events.UserPendingContactRequestEvent;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
 

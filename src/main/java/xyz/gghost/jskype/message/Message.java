@@ -1,9 +1,9 @@
-package xyz.gghost.jskype.internal.message;
+package xyz.gghost.jskype.message;
 
 import lombok.Data;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.User;
 
 @Data
 public class Message {
@@ -25,10 +25,10 @@ public class Message {
     /**
      * Edit the message
      */
-    public Message editMessage(SkypeAPI api, String message){
-        setMessage(message);
+    public Message editMessage(SkypeAPI api, String edit){
+        setMessage(edit);
         edited = true;
-        return new SendMessagePacket(api).editMessage(this);
+        return new SendMessagePacket(api).editMessage(this, message);
     }
     /**
      * Once setMessage has edited the message locally, this will update the edit on skypes servers
@@ -37,6 +37,6 @@ public class Message {
      */
     public Message updateEdit(SkypeAPI api) {
         edited = true;
-        return new SendMessagePacket(api).editMessage(this);
+        return new SendMessagePacket(api).editMessage(this, message);
     }
 }

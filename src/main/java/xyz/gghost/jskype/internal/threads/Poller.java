@@ -6,7 +6,7 @@ import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.events.*;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
 import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
-import xyz.gghost.jskype.internal.message.Message;
+import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
@@ -14,8 +14,8 @@ import xyz.gghost.jskype.internal.packet.packets.GroupInfoPacket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.apache.commons.lang3.StringEscapeUtils;
-import xyz.gghost.jskype.internal.user.GroupUser;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.GroupUser;
+import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
 

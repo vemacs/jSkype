@@ -1,6 +1,4 @@
-package xyz.gghost.jskype.internal.user;
-
-import lombok.Getter;
+package xyz.gghost.jskype.user;
 
 /**
  * Created by Ghost on 19/09/2015.

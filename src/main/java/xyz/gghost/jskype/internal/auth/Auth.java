@@ -5,7 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.exception.*;
+import xyz.gghost.jskype.exception.*;
 import xyz.gghost.jskype.internal.packet.Header;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;

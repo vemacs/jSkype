@@ -2,9 +2,9 @@ package xyz.gghost.jskype.internal.impl;
 
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.message.Message;
+import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
-import xyz.gghost.jskype.internal.user.GroupUser;
+import xyz.gghost.jskype.user.GroupUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,26 +30,21 @@ public class ContactGroupImpl extends GroupImpl implements Group {
     public void leave() {
 
     }
-
     @Override
     public List<GroupUser> getClients(){
         List<GroupUser> users = new ArrayList<GroupUser>();
         //TODO: add the two people
         return new ArrayList<GroupUser>();
     }
-
     public String getId() {
         return id.split("8:")[1];
     }
-
     public String getUsername() {
         return id.split("8:")[1];
     }
-
     public String getLongId() {
         return id;
     }
-
     public Message sendMessage(Message msg) {
         return new SendMessagePacket(api).sendMessage(id, msg);
     }
@@ -58,5 +53,16 @@ public class ContactGroupImpl extends GroupImpl implements Group {
     }
     public String getTopic() {
         return getUsername();
+    }  public boolean isAdmin() {
+        for (GroupUser user : getClients())
+            if (user.getUser().getUsername().equals(api.getUsername()) && user.role.equals(GroupUser.Role.MASTER))
+                return true;
+        return false;
+    }
+    public boolean isAdmin(String usr) {
+        for (GroupUser user : getClients())
+            if (user.getUser().getUsername().equals(usr) && user.role.equals(GroupUser.Role.MASTER))
+                return true;
+        return false;
     }
 }

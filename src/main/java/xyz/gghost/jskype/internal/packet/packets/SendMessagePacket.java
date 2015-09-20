@@ -2,7 +2,7 @@ package xyz.gghost.jskype.internal.packet.packets;
 
 
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.message.Message;
+import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 
@@ -14,10 +14,16 @@ public class SendMessagePacket {
         this.api = api;
     }
 
-    public Message editMessage(Message msg) {
+    public Message editMessage(Message msg, String edit) {
         PacketBuilder packet = new PacketBuilder(api);
         packet.setType(RequestType.POST);
-        packet.setData("{\"content\":\"" + msg.getMessage().replace("\"", "\\\"") + "\",\"messagetype\":\"RichText\",\"contenttype\":\"text\",\"skypeeditedid\":\"" + msg.getId() + "\"}");
+
+        msg.setMessage(edit);
+
+        if (edit == null || msg == null)
+            return msg;
+
+        packet.setData("{\"content\":\"" + edit.replace("\"", "\\\"") + "\",\"messagetype\":\"RichText\",\"contenttype\":\"text\",\"skypeeditedid\":\"" + msg.getId() + "\"}");
 
         packet.setUrl(msg.getUpdateUrl());
         packet.makeRequest();

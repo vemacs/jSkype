@@ -3,8 +3,8 @@ package xyz.gghost.jskype.events;
 import xyz.gghost.jskype.Group;
 import lombok.Getter;
 import xyz.gghost.jskype.event.Event;
-import xyz.gghost.jskype.internal.message.Message;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.message.Message;
+import xyz.gghost.jskype.user.User;
 
 @Getter
 public class UserChatEvent extends Event {

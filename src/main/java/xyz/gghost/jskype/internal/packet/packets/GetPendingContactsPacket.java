@@ -3,11 +3,11 @@ package xyz.gghost.jskype.internal.packet.packets;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.exception.BadResponseException;
-import xyz.gghost.jskype.internal.exception.NoPendingContactsException;
+import xyz.gghost.jskype.exception.BadResponseException;
+import xyz.gghost.jskype.exception.NoPendingContactsException;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.User;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package xyz.gghost.jskype.internal.exception;
+package xyz.gghost.jskype.exception;
 
 /**
  * Created by Ghost on 19/09/2015.

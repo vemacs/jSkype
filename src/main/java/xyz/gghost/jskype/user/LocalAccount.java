@@ -1,4 +1,4 @@
-package xyz.gghost.jskype.internal.user;
+package xyz.gghost.jskype.user;
 
 import lombok.Data;
 

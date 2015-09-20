@@ -4,7 +4,7 @@ package xyz.gghost.jskype.events;
 import lombok.Getter;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.event.Event;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.User;
 
 @Getter
 public class UserLeaveEvent extends Event {

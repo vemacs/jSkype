@@ -6,8 +6,8 @@ import xyz.gghost.jskype.Chat;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
-import xyz.gghost.jskype.internal.user.LocalAccount;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.LocalAccount;
+import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
 import java.util.List;

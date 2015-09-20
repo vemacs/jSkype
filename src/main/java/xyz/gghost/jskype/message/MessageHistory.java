@@ -1,4 +1,4 @@
-package xyz.gghost.jskype.internal.message;
+package xyz.gghost.jskype.message;
 
 import org.json.JSONObject;
 import lombok.Getter;
@@ -8,8 +8,8 @@ import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
-import xyz.gghost.jskype.internal.user.GroupUser;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.GroupUser;
+import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,6 @@ public class MessageHistory {
     public void loadMoreMessages(){
 
         Group convo = api.getGroupById(longId.contains("@") ? longId.split(":")[1].split("@")[0] : longId.split("8:")[1]);
-
 
         String nextUrl = this.nextUrl;
         if (nextUrl == null)
@@ -54,7 +53,7 @@ public class MessageHistory {
             JSONObject jsonMessage = jsonArray.getJSONObject(i);
             if(jsonMessage.getString("type").equals("Message")) {
                 Message message = new Message(Chat.decodeText(jsonMessage.getString("content")));
-                User user = null;
+                User user;
                 try {
                     user = getUser(jsonMessage.getString("from").split("8:")[1], convo);
                 }catch (Exception e ){
@@ -82,7 +81,7 @@ public class MessageHistory {
         return knownMessages.size();
     }
     private User getUser(String username, Group chat) {
-        User user = null;
+        User user;
         user = api.getContact(username);
         if (user == null) {
             try {

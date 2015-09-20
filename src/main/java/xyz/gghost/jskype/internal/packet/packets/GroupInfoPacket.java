@@ -9,8 +9,8 @@ import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
-import xyz.gghost.jskype.internal.user.GroupUser;
-import xyz.gghost.jskype.internal.user.User;
+import xyz.gghost.jskype.user.GroupUser;
+import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
 import java.util.List;

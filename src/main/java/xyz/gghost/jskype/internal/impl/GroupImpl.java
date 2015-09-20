@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.message.Message;
-import xyz.gghost.jskype.internal.message.MessageHistory;
+import xyz.gghost.jskype.message.Message;
+import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.internal.packet.packets.PingPrepPacket;
 import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
 import xyz.gghost.jskype.internal.packet.packets.UserManagementPacket;
-import xyz.gghost.jskype.internal.user.GroupUser;
+import xyz.gghost.jskype.user.GroupUser;
 
 import java.io.File;
 import java.net.URL;
@@ -79,5 +79,13 @@ public class GroupImpl implements Group {
     }
     public void leave(){
         kick(api.getUsername());
+    }
+
+    public boolean isAdmin() {
+        return false;
+    }
+
+    public boolean isAdmin(String usr) {
+        return false;
     }
 }
