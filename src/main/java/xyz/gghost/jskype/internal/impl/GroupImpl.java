@@ -40,15 +40,23 @@ public class GroupImpl implements Group {
         this.api = api;
     }
     public void kick(String usr) {
-        new UserManagementPacket(api).kickUser(getId(), usr);
+        new UserManagementPacket(api).kickUser(getLongId(), usr);
     }
 
     public void add(String usr) {
-        new UserManagementPacket(api).addUser(getId(), usr);
+        new UserManagementPacket(api).addUser(getLongId(), usr);
     }
 
     public String getId() {
-        return id.split("@")[0].split(":")[1];
+        try {
+            return id.split("@")[0].split(":")[1];
+        }catch(Exception e){
+            try {
+                return id.split("8:")[1];
+            }catch(Exception je){
+                return id;
+            }
+        }
     }
 
     public String getLongId() {

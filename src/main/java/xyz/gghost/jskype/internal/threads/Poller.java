@@ -90,16 +90,16 @@ public class Poller extends Thread {
 
                             String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
                             String picture = resource.getJSONObject("properties").isNull("picture") ? "" : resource.getJSONObject("properties").getString("picture");
-                            GroupImpl group = new GroupImpl(api, topic);
+                            GroupImpl group = new GroupImpl(api, "19:" + object.getString("resourceLink").split("19:")[1].split("@")[0] + "@thread.skype");
                             group.setPictureUrl(picture);
                             group.setTopic(topic);
                             //user join/leave events
                             for (int ii = 0; ii < object.getJSONObject("resource").getJSONArray("members").length(); ii++) {
                                 JSONObject user = object.getJSONObject("resource").getJSONArray("members").getJSONObject(ii);
-                                newUsers.add(user.getString("id").replace("8:", ""));
+                                newUsers.add(user.getString("id").split("8:")[1]);
                                 try {
                                     GroupUser.Role role = GroupUser.Role.USER;
-                                    User ussr = api.getSimpleUser(user.getString("id").replace("8:", ""));
+                                    User ussr = api.getSimpleUser(user.getString("id").split("8:")[1]);
                                     if (!user.getString("role").equals("User"))
                                         role = GroupUser.Role.MASTER;
                                     GroupUser gu = new GroupUser(ussr, role);
@@ -115,15 +115,12 @@ public class Poller extends Thread {
 
                             oldUsers.removeAll(newUsers);
                             newUsers.removeAll(oldUsers2);
-                            //get difference
-                            for (String old : oldUsers) {
-                                if (!old.equals("live"))
-                                    api.getEventManager().executeEvent(new UserLeaveEvent(group, new GetProfilePacket(api).getUser(old)));
-                            }
-                            for (String news : newUsers) {
-                                if (!news.equals("live"))
-                                    api.getEventManager().executeEvent(new UserJoinEvent(group, new GetProfilePacket(api).getUser(news)));
-                            }
+
+                            for (String old : oldUsers)
+                                api.getEventManager().executeEvent(new UserLeaveEvent(group, new GetProfilePacket(api).getUser(old)));
+                            for (String news : newUsers)
+                                api.getEventManager().executeEvent(new UserJoinEvent(group, new GetProfilePacket(api).getUser(news)));
+
                         }
                     }
 
@@ -232,12 +229,10 @@ public class Poller extends Thread {
         try {
             String idLong = object.getString("resourceLink").split("conversations/")[1].split("/")[0];
             String idShort = object.getString("resourceLink").split("conversations/19:")[1].split("@thread")[0];
-            //get if already exists
-            for (Group group : api.getGroups()) {
+            for (Group group : api.getGroups())
                 if (group.getId().equals(idShort))
                     return;
-            }
-            api.getGroups().add(new GroupInfoPacket(api).getGroup(idLong));
+            api.updateGroup(new GroupInfoPacket(api).getGroup(idLong));
         }catch(Exception e){
             System.out.println(object.getString("resourceLink"));
             e.printStackTrace();

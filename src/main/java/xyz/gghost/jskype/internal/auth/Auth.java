@@ -73,7 +73,6 @@ public class Auth {
     public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, RecaptchException {
         Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
         if (inputs.size() > 0) {
-            System.out.println("LOGGED IN ");
             account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
         } else if (loginResponseDocument.html().contains("https://www.google.com/recaptcha/")) {
             System.out.println("Failed to connect due to a recaptcha!");

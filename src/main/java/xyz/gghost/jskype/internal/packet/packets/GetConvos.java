@@ -41,7 +41,7 @@ public class GetConvos {
                         try {
                             api.updateGroup(new GroupInfoPacket(api).getGroup(id));
                         } catch (Exception e) {
-                            api.log("WArn: Failed to get convo " + id + " due to rate limiting!");
+                            api.log("Warn: Failed to get convo " + id + " due to rate limiting!");
                         }
                     }
                 }

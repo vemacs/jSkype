@@ -51,7 +51,7 @@ public class GroupInfoPacket {
             JSONObject member = membersArray.getJSONObject(ii);
             try {
                 GroupUser.Role role = GroupUser.Role.USER;
-                User ussr = api.getSimpleUser(member.getString("id").split(":")[1]);
+                User ussr = api.getSimpleUser(member.getString("id").split("8:")[1]);
                 if (!member.getString("role").equals("User"))
                     role = GroupUser.Role.MASTER;
                 group.getClients().add(new GroupUser(ussr, role));
@@ -81,7 +81,7 @@ public class GroupInfoPacket {
                 try {
 
                     GroupUser.Role role = GroupUser.Role.USER;
-                    User ussr = api.getSimpleUser(member.getString("id").split(":")[1]);
+                    User ussr = api.getSimpleUser(member.getString("id").split("8:")[1]);
                     if (!member.getString("role").equals("User"))
                         role = GroupUser.Role.MASTER;
 
