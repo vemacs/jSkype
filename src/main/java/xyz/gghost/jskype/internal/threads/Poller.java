@@ -90,7 +90,11 @@ public class Poller extends Thread {
 
                             String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
                             String picture = resource.getJSONObject("properties").isNull("picture") ? "" : resource.getJSONObject("properties").getString("picture");
+<<<<<<< HEAD
                             GroupImpl group = new GroupImpl(api, "19:" + object.getString("resourceLink").split("19:")[1].split("@")[0] + "@thread.skype");
+=======
+                            GroupImpl group = new GroupImpl(api, topic);
+>>>>>>> origin/master
                             group.setPictureUrl(picture);
                             group.setTopic(topic);
                             //user join/leave events
