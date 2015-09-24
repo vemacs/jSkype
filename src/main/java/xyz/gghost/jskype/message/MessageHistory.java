@@ -77,9 +77,11 @@ public class MessageHistory {
             }
         }
     }
+
     public int knownMessagesCount(){
         return knownMessages.size();
     }
+
     private User getUser(String username, Group chat) {
         User user;
         user = api.getContact(username);

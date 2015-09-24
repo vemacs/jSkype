@@ -36,12 +36,12 @@ public class GetConvos {
                     api.updateGroup(new ContactGroupImpl(api, recent.getString("id")));
                 } else {
                     String id = recent.getString("id");
-                    //Old skype for web bug
+
                     if (id.endsWith("@thread.skype")) {
                         try {
                             api.updateGroup(new GroupInfoPacket(api).getGroup(id));
                         } catch (Exception e) {
-                            api.log("Warn: Failed to get convo " + id + " due to rate limiting!");
+                            //you've been rate limited
                         }
                     }
                 }

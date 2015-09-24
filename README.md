@@ -1,5 +1,3 @@
-#Recoded... Having issues? use version 2 (https://github.com/GhostSkype/jSkype)
-
 # jSkype
 jSkype creation started when skype4web was released, however at the time I was making a private Skype client in Java, not an API. Samczsun, better known as super salter 9000 was creating an extremely limited api at the time of my client creation and still is today. In order to spare people from his limited api, I'm releasing jSkype. 
 
@@ -16,6 +14,7 @@ jSkype creation started when skype4web was released, however at the time I was m
 - User information
 - Search Skype's DB
 - Change your profile picture
+- Set your online status
 - Get info about yourself
 - Always online (Doesn't break after 2 days plus can survive internet shortage)
  
@@ -29,6 +28,10 @@ jSkype creation started when skype4web was released, however at the time I was m
 - UserLeaveEvent
 - UserPendingContactRequestEvent
 - UserTypingEvent
+- ChatPictureChangedEvent
+- UserNewMovieAdsPingEvent
+- UserRoleChangedEvent
+- UserStatusChangedEvent (online status)
 
 #Downloads, Javadocs, etc
 JavaDocs: http://gghost.xyz/JavaDocs/jSkype
@@ -47,7 +50,7 @@ Dependency:
 <dependency>
   <groupId>xyz.gghost</groupId>
   <artifactId>jskype</artifactId>
-  <version>3.5</version>
+  <version>3.6</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -117,7 +120,6 @@ public class Test {
 ###You can use the UserChatEvent instead 
 
 #TODO
-- Start using interfaces 
 - Handle calls (Windows only + semi compatible with wine)
 - Handle voice mail
 - User promoted event

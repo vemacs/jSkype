@@ -50,7 +50,6 @@ public class PacketBuilderUploader extends PacketBuilder {
             wr.write(bytes);
             wr.flush();
             wr.close();
-            
 
             int responseCode = con.getResponseCode();
             if (responseCode == 200 || responseCode == 201) {

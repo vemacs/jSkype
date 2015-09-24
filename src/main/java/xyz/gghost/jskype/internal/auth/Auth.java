@@ -75,10 +75,8 @@ public class Auth {
         if (inputs.size() > 0) {
             account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
         } else if (loginResponseDocument.html().contains("https://www.google.com/recaptcha/")) {
-            System.out.println("Failed to connect due to a recaptcha!");
-
+            account.log("Failed to connect due to a recaptcha!");
             throw new RecaptchException();
-
         } else {
             Elements elements = loginResponseDocument.select(".message_error");
             if (elements.size() > 0) {

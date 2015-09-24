@@ -4,12 +4,13 @@ import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 
+import java.net.URLEncoder;
+
 public class PingPacket {
     private SkypeAPI api;
 
     public PingPacket(SkypeAPI api) {
         this.api = api;
-
     }
 
     public void doNow() {
@@ -27,6 +28,11 @@ public class PingPacket {
                 api.log("Failed to reconnect. ");
             }
         }
+
+        PacketBuilder online = new PacketBuilder(api);
+        online.setType(RequestType.POST);
+        online.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/endpoints/" + URLEncoder.encode(api.getLoginTokens().getEndPoint()) + "/active");        online.setData("{\"timeout\":7}");
+        online.makeRequest();
 
     }
 

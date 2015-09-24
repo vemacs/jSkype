@@ -1,32 +1,17 @@
 package xyz.gghost.jskype.user;
 
-import lombok.Data;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
 
-@Data
-public class User {
-    private String displayName;
-    private String username;
-    private String pictureUrl = "https://swx.cdn.skype.com/assets/v/0.0.213/images/avatars/default-avatar-group_46.png";
-    private String mood = "";
-    private boolean isContact = false;
-
-    public User() {
-    }
-
-    public User(String username) {
-        displayName = username;
-        this.username = username;
-    }
-    public void sendContactRequest(SkypeAPI api){
-        api.sendContactRequest(username);
-    }
-    public void sendContactRequest(SkypeAPI api, String hello){
-        api.sendContactRequest(username, hello);
-    }
-    public Group getGroup(SkypeAPI api){
-        return new ContactGroupImpl(api, "8:" + username);
-    }
+public interface User {
+    String getDisplayName();
+    String getUsername();
+    String getPictureUrl();
+    OnlineStatus getOnlineStatus();
+    boolean isBlocked();
+    String getMood();
+    boolean isContact();
+    void sendContactRequest(SkypeAPI api);
+    void sendContactRequest(SkypeAPI api, String hello);
+    Group getGroup(SkypeAPI api);
 }

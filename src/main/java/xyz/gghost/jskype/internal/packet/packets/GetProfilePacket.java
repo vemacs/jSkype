@@ -4,6 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import xyz.gghost.jskype.Chat;
 import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.internal.impl.LocalAccountImpl;
+import xyz.gghost.jskype.internal.impl.UserImpl;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.user.LocalAccount;
@@ -20,7 +22,7 @@ public class GetProfilePacket {
 
 
     public LocalAccount getMe(){
-        LocalAccount me = new LocalAccount();
+        LocalAccountImpl me = new LocalAccountImpl();
 
         PacketBuilder admin = new PacketBuilder(api);
         admin.setType(RequestType.GET);
@@ -103,7 +105,7 @@ public class GetProfilePacket {
             return minorUserData(username);
         }
         try {
-            User user = new User(username);
+            UserImpl user = new UserImpl(username);
 
             data = data.replaceFirst("\\[", "").replace("]", "");
             JSONObject jsonObject = new JSONObject(data); //ln 50
@@ -152,12 +154,15 @@ public class GetProfilePacket {
                 JSONObject jData = jsonObject.getJSONObject(ii);
                 count ++; // ++ 1
 
-                User user = new User(jData.getString("username"));
+                UserImpl user = new UserImpl(jData.getString("username"));
 
                 user.setPictureUrl(jData.isNull("avatarUrl") ? "https://swx.cdn.skype.com/assets/v/0.0.213/images/avatars/default-avatar-group_46.png" : jData.getString("avatarUrl"));
                 user.setDisplayName(jData.isNull("displayname") ? (jData.isNull("firstname") ? jData.getString("username") : getDisplayName(data, (count))) : jData.getString("displayname"));
                 user.setMood(jData.isNull("richMood") ? (jData.isNull("mood") ? "" : jData.getString("mood")) : jData.getString("richMood"));
                 user.setMood(Chat.decodeText(user.getMood()));
+
+                user.setFirstName(jData.isNull("firstname") ? "" : jData.getString("firstname"));
+                user.setLastName(jData.isNull("lastname") ? "" : jData.getString("lastname"));
 
                 contacts.add(user);
             }
@@ -171,7 +176,7 @@ public class GetProfilePacket {
         }
     }
     private User minorUserData(String username){
-        return new User(username);
+        return new UserImpl(username);
     }
     public String getDisplayName(String data, int count){
         return (data.split("firstname\":")[count].split("\",\"")[0]).replace("\"", "");

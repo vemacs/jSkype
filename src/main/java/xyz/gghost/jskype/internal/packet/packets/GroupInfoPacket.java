@@ -56,7 +56,7 @@ public class GroupInfoPacket {
                     role = GroupUser.Role.MASTER;
                 group.getClients().add(new GroupUser(ussr, role));
             } catch (Exception e){
-                api.log("Failed to get a member info");
+                api.log("Failed to get a members info");
             }
         }
         return group;
@@ -88,7 +88,7 @@ public class GroupInfoPacket {
                     GroupUser gu = new GroupUser(ussr, role);
                     groupMembers.add(gu);
                 } catch (Exception e){
-                    api.log("Failed to get a member info");
+                    api.log("Failed to get a members info");
                 }
             }
             return groupMembers;

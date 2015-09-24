@@ -8,6 +8,7 @@ import xyz.gghost.jskype.event.EventManager;
 import xyz.gghost.jskype.internal.auth.Auth;
 import xyz.gghost.jskype.exception.BadResponseException;
 import xyz.gghost.jskype.exception.NoPendingContactsException;
+import xyz.gghost.jskype.internal.impl.UserImpl;
 import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
@@ -17,6 +18,7 @@ import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
 import xyz.gghost.jskype.internal.auth.LoginTokens;
 import xyz.gghost.jskype.internal.threads.*;
 import xyz.gghost.jskype.user.LocalAccount;
+import xyz.gghost.jskype.user.OnlineStatus;
 import xyz.gghost.jskype.user.User;
 
 import java.io.FileInputStream;
@@ -30,34 +32,52 @@ import java.util.UUID;
 
 public class SkypeAPI {
 
-    @Getter private List<Group> groups = new ArrayList<Group>();
-    @Getter private List<User> contacts = new ArrayList<User>();
-    @Getter private LoginTokens loginTokens = new LoginTokens();
-    @Getter private EventManager eventManager = new EventManager();
-    @Getter private HashMap<String, MessageHistory> a = new HashMap<String, MessageHistory>();  //Could use an interface to hide this but its not worth it
-    @Setter @Getter private boolean allowLogging = false;
-    @Getter private String username;
-    @Getter UUID uuid = UUID.randomUUID();
-    @Getter private String password;
-    @Getter @Setter private boolean loaded;
+    @Getter
+    private List<Group> groups = new ArrayList<Group>();
+    @Getter
+    private List<User> contacts = new ArrayList<User>();
+    @Getter
+    private LoginTokens loginTokens = new LoginTokens();
+    @Getter
+    private EventManager eventManager = new EventManager();
+    @Getter
+    private HashMap<String, MessageHistory> a = new HashMap<String, MessageHistory>();  //Could use an interface to hide this but its not worth it
+    @Setter
+    @Getter
+    private boolean allowLogging = true;
+    @Getter
+    private String username;
+    @Getter
+    UUID uuid = UUID.randomUUID();
+    @Getter
+    private String password;
+    @Getter
+    @Setter
+    private boolean loaded;
+    private OnlineStatus s = OnlineStatus.ONLINE;
     private Poller poller;
     private Thread contactUpdater;
     private Thread pinger;
     private ConvoUpdater convoUpdater;
     private PendingContactEventThread pendingContactThread;
 
-    public SkypeAPI(String username, String password){
+    public SkypeAPI(String username, String password) {
         this.username = username;
         this.password = password;
     }
-    public void login() throws Exception{
+
+    public void login() throws Exception {
         new Auth().login(this);
         init();
+        updateStatus(OnlineStatus.ONLINE);
     }
-    public void log(String msg){
+
+    public void log(String msg) {
         //TODO: custom logger
-        System.out.println(msg);
+        if (allowLogging)
+            System.out.println(msg);
     }
+
     private void init() {
         pinger = new Ping(this);
         pinger.start();
@@ -70,19 +90,29 @@ public class SkypeAPI {
         convoUpdater = new ConvoUpdater(this);
         convoUpdater.start();
     }
-    public void stop(){
+
+    public void stop() {
+        poller.stopThreads();
         pinger.stop();
         contactUpdater.stop();
         poller.stop();
         convoUpdater.stop();
         pendingContactThread.stop();
     }
+
+    public OnlineStatus getOnlineStatus() {
+        return s;
+    }
+    //TODO: interface
+    public void s(OnlineStatus status) {
+        s = status;
+    }
     /**
      * This method will get as much data as possible about a user without contacting to skype
      */
     public User getSimpleUser(String username) {
         User user = getContact(username);
-        return user != null ? user : new User(username);
+        return user != null ? user : new UserImpl(username);
     }
     /**
      * get user by username
@@ -107,6 +137,13 @@ public class SkypeAPI {
                 return group;
         }
         return null;
+    }
+    public void updateStatus(OnlineStatus a){
+        PacketBuilder packet = new PacketBuilder(this);
+        packet.setData("{\"status\":\"" +  Character.toString(a.name().charAt(0)).toUpperCase() + (a.name().substring(1).toLowerCase()) +"\"}");
+        packet.setType(RequestType.PUT);
+        packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/presenceDocs/messagingService");
+        packet.makeRequest();
     }
     public void updateGroup(Group group){
         Group oldGroup = null;

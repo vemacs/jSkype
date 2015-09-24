@@ -23,6 +23,7 @@ public interface Group {
     Message sendMessage(String msg);
     Message sendImage(File url);
     Message sendImage(URL url);
+    void changeTopic(String topic);
     List<GroupUser> getClients();
     boolean isUserChat();
 }

@@ -16,5 +16,4 @@ public class GroupUser{
     public enum Role{
         MASTER, USER
     }
-
 }

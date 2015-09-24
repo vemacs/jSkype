@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.internal.packet.packets.PingPrepPacket;
@@ -100,5 +102,12 @@ public class GroupImpl implements Group {
             if (user.getUser().getUsername().equals(usr) && user.role.equals(GroupUser.Role.MASTER))
                 return true;
         return false;
+    }
+    public void changeTopic(String topic){
+        PacketBuilder pb = new PacketBuilder(api);
+        pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + id + "/properties?name=topic");
+        pb.setType(RequestType.PUT);
+        pb.setData("{\"topic\":\""+topic+"\"}");
+        pb.makeRequest();
     }
 }

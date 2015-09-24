@@ -29,7 +29,6 @@ public class PacketBuilder {
 
     @Deprecated
     protected void addLogin(SkypeAPI skype) {
-
         addHeader(new Header("RegistrationToken", skype.getLoginTokens().getReg()));
         addHeader(new Header("X-Skypetoken", skype.getLoginTokens().getXToken()));
     }
@@ -51,10 +50,10 @@ public class PacketBuilder {
                 con.setRequestProperty("Cookie", cookies);
             con.setDoOutput(true);
             if (sendLoginHeaders)
-                addLogin(api);
-            for (Header s : headers) {
+                    addLogin(api);
+            for (Header s : headers)
                 con.addRequestProperty(s.getType(), s.getData());
-            }
+
             if (!(data.getBytes().length == 0)) {
                 DataOutputStream wr = new DataOutputStream(con.getOutputStream());
                 wr.write(data.getBytes());
@@ -93,7 +92,7 @@ public class PacketBuilder {
                 if (url.equals("https://api.skype.com/users/self/contacts/profiles"))
                     return null;
                 //Debug info
-                api.log("Error contacting skype\nUrl: " + url + "\nCode: " + code + "\nData: " + data);
+                api.log("Error contacting skype\nUrl: " + url + "\nCode: " + code + "\nData: " + data + "\nType: " + type);
                 for (Header header : headers)
                     api.log(header.getType() + ": " + header.getData());
                 return null;

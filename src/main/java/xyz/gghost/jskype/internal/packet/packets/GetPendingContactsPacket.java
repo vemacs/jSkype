@@ -66,6 +66,7 @@ public class GetPendingContactsPacket {
 
         String URL2 = "https://client-s.gateway.messenger.live.com/v1/users/ME/contacts/";
         PacketBuilder packet2 = new PacketBuilder(api);
+
         //TODO: Find a replacement for json.org that supports json building
         String data  = "{\"contacts\": [";
         boolean first = true;
