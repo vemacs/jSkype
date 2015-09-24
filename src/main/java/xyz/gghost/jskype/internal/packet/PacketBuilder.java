@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public class PacketBuilder {
     protected SkypeAPI api;
     //TODO: Recode -> this is from an older version of jSkype
-    //TODO: JESUS FUCKING CHIRST THIS IS SOO OLD
     @Getter @Setter protected String data = "";
     @Getter @Setter protected String url = "";
     @Getter @Setter protected RequestType type = null;
