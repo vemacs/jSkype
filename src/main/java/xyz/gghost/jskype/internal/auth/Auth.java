@@ -71,23 +71,33 @@ public class Auth {
 
 
     public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, RecaptchException {
-        Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
-        if (inputs.size() > 0) {
-            account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
-        } else if (loginResponseDocument.html().contains("https://www.google.com/recaptcha/")) {
-            account.log("Failed to connect due to a recaptcha!");
-            throw new RecaptchException();
-        } else {
-            Elements elements = loginResponseDocument.select(".message_error");
-            if (elements.size() > 0) {
-                Element div = elements.get(0);
-                if (div.children().size() > 1) {
-                    Element span = div.child(1);
+        try {
+            Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
+            if (inputs.size() > 0) {
+                account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
+            } else if (loginResponseDocument.html().contains("https://www.google.com/recaptcha/")) {
+                account.log("Failed to connect due to a recaptcha!");
+                throw new RecaptchException();
+            } else {
+                Elements elements = loginResponseDocument.select(".message_error");
+                if (elements.size() > 0) {
+                    Element div = elements.get(0);
+                    if (div.children().size() > 1) {
+                        Element span = div.child(1);
 
-                    throw new FailedToLoginException(span.text());
+                        throw new FailedToLoginException(span.text());
+                    }
                 }
+                throw new FailedToLoginException("Could not find error message. Dumping entire page. \n" + loginResponseDocument.html());
             }
-            throw new FailedToLoginException("Could not find error message. Dumping entire page. \n" + loginResponseDocument.html());
+        }catch (FailedToLoginException  e){
+            if (!account.isReloggin())
+                throw e;
+            account.stop();
+        }catch (RecaptchException e){
+            if (!account.isReloggin())
+                throw e;
+            account.stop();
         }
     }
 

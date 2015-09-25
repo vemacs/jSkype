@@ -1,6 +1,6 @@
 package xyz.gghost.jskype.internal.threads;
 
-import xyz.gghost.jskype.message.MessageBuilderUtils;
+import xyz.gghost.jskype.message.FormatUtils;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.events.*;
@@ -117,7 +117,7 @@ public class Poller extends Thread {
                     if (!resource.isNull("messagetype") && resource.getString("messagetype").equals("ThreadActivity/TopicUpdate")) {
 
                         String topic = resource.getString("content").split("<value>")[1].split("<\\/value>")[0];
-                        topic = MessageBuilderUtils.decodeText(topic);
+                        topic = FormatUtils.decodeText(topic);
 
                         String username = resource.getString("content").split("<initiator>8:")[1].split("<\\/initiator>")[0];
                         String oldTopic = api.getGroupById(chat.getId()).getTopic();
@@ -160,7 +160,7 @@ public class Poller extends Thread {
                         String content = "";
 
                         if(!resource.isNull("content"))
-                            content = MessageBuilderUtils.decodeText(resource.getString("content"));
+                            content = FormatUtils.decodeText(resource.getString("content"));
 
                         if (!resource.isNull("clientmessageid"))
                             message.setId(resource.getString("clientmessageid"));
@@ -183,7 +183,7 @@ public class Poller extends Thread {
                     //pings
                     if (!resource.isNull("messagetype") && resource.getString("messagetype").startsWith("RichText/")) {
                         User user = getUser(resource.getString("from").split("8:")[1], chat);
-                        String content = MessageBuilderUtils.decodeText(resource.getString("content"));
+                        String content = FormatUtils.decodeText(resource.getString("content"));
 
                         if (content.contains("To view this shared photo, go to: <a href=\"https://api.asm.skype.com/s/i?")) {
                             String id = content.split("To view this shared photo, go to: <a href=\"https://api.asm.skype.com/s/i?")[1].split("\">")[0];

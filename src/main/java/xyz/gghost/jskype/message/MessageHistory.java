@@ -51,7 +51,7 @@ public class MessageHistory {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonMessage = jsonArray.getJSONObject(i);
             if(jsonMessage.getString("type").equals("Message")) {
-                Message message = new Message(MessageBuilderUtils.decodeText(jsonMessage.getString("content")));
+                Message message = new Message(FormatUtils.decodeText(jsonMessage.getString("content")));
                 User user;
                 try {
                     user = getUser(jsonMessage.getString("from").split("8:")[1], convo);
@@ -60,11 +60,11 @@ public class MessageHistory {
                 }
                 String content = "";
                 if(!jsonMessage.isNull("content"))
-                    content = MessageBuilderUtils.decodeText(jsonMessage.getString("content"));
+                    content = FormatUtils.decodeText(jsonMessage.getString("content"));
                 if (!jsonMessage.isNull("clientmessageid"))
                     message.setId(jsonMessage.getString("clientmessageid"));
                 if (!jsonMessage.isNull("skypeeditedid")) {
-                    content = MessageBuilderUtils.decodeText(content.replaceFirst("Edited previous message: ", "").split("<e_m")[0]);
+                    content = FormatUtils.decodeText(content.replaceFirst("Edited previous message: ", "").split("<e_m")[0]);
                     message.setId(jsonMessage.getString("skypeeditedid"));
                     message.setEdited(true);
                 }

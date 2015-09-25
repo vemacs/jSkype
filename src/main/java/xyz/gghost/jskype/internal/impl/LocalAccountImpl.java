@@ -10,7 +10,7 @@ public class LocalAccountImpl implements LocalAccount{
     private String name;
     private String email;
     private String DOB;
-    private int phoneNumber;
+    private String phoneNumber;
     private String mood;
     private String site;
     private String avatar;

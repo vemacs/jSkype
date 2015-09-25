@@ -3,9 +3,9 @@ package xyz.gghost.jskype.message;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-public final class MessageBuilderUtils {
+public final class FormatUtils {
 
-    private MessageBuilderUtils() {
+    private FormatUtils() {
     }
 
     /**

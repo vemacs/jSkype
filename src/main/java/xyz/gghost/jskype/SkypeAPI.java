@@ -61,6 +61,7 @@ public class SkypeAPI {
     private Thread pinger;
     private ConvoUpdater convoUpdater;
     private PendingContactEventThread pendingContactThread;
+    @Getter @Setter private boolean reloggin = false;
 //    @Getter private CallingMaster callingMaster = new CallingMaster();
     public SkypeAPI(String username, String password) {
         this.username = username;
@@ -69,6 +70,7 @@ public class SkypeAPI {
 
     public void login() throws Exception {
         new Auth().login(this);
+        reloggin = true;
         init();
         updateStatus(OnlineStatus.ONLINE);
     }
