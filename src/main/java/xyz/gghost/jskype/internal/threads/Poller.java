@@ -1,6 +1,6 @@
 package xyz.gghost.jskype.internal.threads;
 
-import xyz.gghost.jskype.Chat;
+import xyz.gghost.jskype.message.MessageBuilderUtils;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.events.*;
@@ -14,13 +14,11 @@ import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
 import xyz.gghost.jskype.internal.packet.packets.GroupInfoPacket;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.apache.commons.lang3.StringEscapeUtils;
 import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.OnlineStatus;
 import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class Poller extends Thread {
@@ -119,7 +117,7 @@ public class Poller extends Thread {
                     if (!resource.isNull("messagetype") && resource.getString("messagetype").equals("ThreadActivity/TopicUpdate")) {
 
                         String topic = resource.getString("content").split("<value>")[1].split("<\\/value>")[0];
-                        topic = Chat.decodeText(topic);
+                        topic = MessageBuilderUtils.decodeText(topic);
 
                         String username = resource.getString("content").split("<initiator>8:")[1].split("<\\/initiator>")[0];
                         String oldTopic = api.getGroupById(chat.getId()).getTopic();
@@ -162,7 +160,7 @@ public class Poller extends Thread {
                         String content = "";
 
                         if(!resource.isNull("content"))
-                            content = Chat.decodeText(resource.getString("content"));
+                            content = MessageBuilderUtils.decodeText(resource.getString("content"));
 
                         if (!resource.isNull("clientmessageid"))
                             message.setId(resource.getString("clientmessageid"));
@@ -185,7 +183,7 @@ public class Poller extends Thread {
                     //pings
                     if (!resource.isNull("messagetype") && resource.getString("messagetype").startsWith("RichText/")) {
                         User user = getUser(resource.getString("from").split("8:")[1], chat);
-                        String content = Chat.decodeText(resource.getString("content"));
+                        String content = MessageBuilderUtils.decodeText(resource.getString("content"));
 
                         if (content.contains("To view this shared photo, go to: <a href=\"https://api.asm.skype.com/s/i?")) {
                             String id = content.split("To view this shared photo, go to: <a href=\"https://api.asm.skype.com/s/i?")[1].split("\">")[0];

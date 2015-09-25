@@ -1,6 +1,5 @@
 package xyz.gghost.jskype.internal.packet.packets;
 
-import xyz.gghost.jskype.Chat;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;

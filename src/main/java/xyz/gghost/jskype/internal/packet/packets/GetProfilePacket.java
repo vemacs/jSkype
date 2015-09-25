@@ -2,7 +2,7 @@ package xyz.gghost.jskype.internal.packet.packets;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import xyz.gghost.jskype.Chat;
+import xyz.gghost.jskype.message.MessageBuilderUtils;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.LocalAccountImpl;
 import xyz.gghost.jskype.internal.impl.UserImpl;
@@ -61,14 +61,13 @@ public class GetProfilePacket {
             if (!json.isNull("firstname"))
                 me.setDisplayName(json.getString("firstname")); //TODO: fix
             if (!json.isNull("mood"))
-                me.setMood(Chat.decodeText(json.isNull("richMood") ? (json.isNull("mood") ? "" : json.getString("mood")) : json.getString("richMood")));
-
+                me.setMood(MessageBuilderUtils.decodeText(json.isNull("richMood") ? (json.isNull("mood") ? "" : json.getString("mood")) : json.getString("richMood")));
             if (!json.isNull("phoneOffice"))
-                me.setPhoneNumber(json.getString("phoneOffice"));
+                me.setPhoneNumber(json.getInt("phoneOffice"));
             if (!json.isNull("phoneHome"))
-                me.setPhoneNumber(json.getString("phoneHome"));
+                me.setPhoneNumber(json.getInt("phoneHome"));
             if (!json.isNull("phoneMobile"))
-                me.setPhoneNumber(json.getString("phoneMobile"));
+                me.setPhoneNumber(json.getInt("phoneMobile"));
 
             if (!json.isNull("city"))
                 me.setLocation(json.getString("phoneMobile"));
@@ -114,7 +113,7 @@ public class GetProfilePacket {
             user.setPictureUrl(jsonObject.isNull("avatarUrl") ? "https://swx.cdn.skype.com/assets/v/0.0.213/images/avatars/default-avatar-group_46.png" : jsonObject.getString("avatarUrl"));
             user.setDisplayName(jsonObject.isNull("displayname") ? (jsonObject.isNull("firstname") ? username : getDisplayName(data)) : jsonObject.getString("displayname"));
             user.setMood(jsonObject.isNull("richMood") ? (jsonObject.isNull("mood") ? "" : jsonObject.getString("mood")) : jsonObject.getString("richMood"));
-            user.setMood(Chat.decodeText(user.getMood()));
+            user.setMood(MessageBuilderUtils.decodeText(user.getMood()));
 
             return user;
         }catch(Exception e){
@@ -159,7 +158,7 @@ public class GetProfilePacket {
                 user.setPictureUrl(jData.isNull("avatarUrl") ? "https://swx.cdn.skype.com/assets/v/0.0.213/images/avatars/default-avatar-group_46.png" : jData.getString("avatarUrl"));
                 user.setDisplayName(jData.isNull("displayname") ? (jData.isNull("firstname") ? jData.getString("username") : getDisplayName(data, (count))) : jData.getString("displayname"));
                 user.setMood(jData.isNull("richMood") ? (jData.isNull("mood") ? "" : jData.getString("mood")) : jData.getString("richMood"));
-                user.setMood(Chat.decodeText(user.getMood()));
+                user.setMood(MessageBuilderUtils.decodeText(user.getMood()));
 
                 user.setFirstName(jData.isNull("firstname") ? "" : jData.getString("firstname"));
                 user.setLastName(jData.isNull("lastname") ? "" : jData.getString("lastname"));

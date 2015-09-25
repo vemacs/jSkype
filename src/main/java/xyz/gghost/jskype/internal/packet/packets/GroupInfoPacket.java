@@ -3,7 +3,7 @@ package xyz.gghost.jskype.internal.packet.packets;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
-import xyz.gghost.jskype.Chat;
+import xyz.gghost.jskype.message.MessageBuilderUtils;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
@@ -44,7 +44,7 @@ public class GroupInfoPacket {
         if (!properties.isNull("picture"))
             group.setPictureUrl(properties.getString("picture").split("@")[1]);
 
-        group.setTopic(Chat.decodeText(group.getTopic()));
+        group.setTopic(MessageBuilderUtils.decodeText(group.getTopic()));
 
         JSONArray membersArray = new JSONObject(data).getJSONArray("members");
         for (int ii = 0; ii < membersArray.length(); ii++) {

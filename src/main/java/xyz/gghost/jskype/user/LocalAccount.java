@@ -7,7 +7,7 @@ public interface LocalAccount {
     String getName();
     String getEmail();
     String getDOB();
-    String getPhoneNumber();
+    int getPhoneNumber();
     String getMood();
     String getSite();
     String getAvatar();

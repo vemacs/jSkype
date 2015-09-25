@@ -1,11 +1,11 @@
-package xyz.gghost.jskype;
+package xyz.gghost.jskype.message;
 
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-public final class Chat {
+public final class MessageBuilderUtils {
 
-    private Chat() {
+    private MessageBuilderUtils() {
     }
 
     /**
@@ -116,4 +116,5 @@ public final class Chat {
         text = StringEscapeUtils.unescapeJson(text);
         return text;
     }
+
 }

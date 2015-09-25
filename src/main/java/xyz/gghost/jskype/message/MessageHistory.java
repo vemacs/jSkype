@@ -3,7 +3,6 @@ package xyz.gghost.jskype.message;
 import org.json.JSONObject;
 import lombok.Getter;
 import org.json.JSONArray;
-import xyz.gghost.jskype.Chat;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
@@ -52,7 +51,7 @@ public class MessageHistory {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonMessage = jsonArray.getJSONObject(i);
             if(jsonMessage.getString("type").equals("Message")) {
-                Message message = new Message(Chat.decodeText(jsonMessage.getString("content")));
+                Message message = new Message(MessageBuilderUtils.decodeText(jsonMessage.getString("content")));
                 User user;
                 try {
                     user = getUser(jsonMessage.getString("from").split("8:")[1], convo);
@@ -61,11 +60,11 @@ public class MessageHistory {
                 }
                 String content = "";
                 if(!jsonMessage.isNull("content"))
-                    content = Chat.decodeText(jsonMessage.getString("content"));
+                    content = MessageBuilderUtils.decodeText(jsonMessage.getString("content"));
                 if (!jsonMessage.isNull("clientmessageid"))
                     message.setId(jsonMessage.getString("clientmessageid"));
                 if (!jsonMessage.isNull("skypeeditedid")) {
-                    content = Chat.decodeText(content.replaceFirst("Edited previous message: ", "").split("<e_m")[0]);
+                    content = MessageBuilderUtils.decodeText(content.replaceFirst("Edited previous message: ", "").split("<e_m")[0]);
                     message.setId(jsonMessage.getString("skypeeditedid"));
                     message.setEdited(true);
                 }
