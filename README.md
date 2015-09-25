@@ -37,7 +37,7 @@ jSkype creation started when skype4web was released, however at the time I was m
 #Downloads, Javadocs, etc
 JavaDocs: http://gghost.xyz/JavaDocs/jSkype
 
-Maven: http://maven.gghost.xyz OR http://ghosted.me/maven
+Maven: http://maven.gghost.xyz OR http://ghosted.me/maven (outdated!)
 
 Repository:
 ```
@@ -51,7 +51,7 @@ Dependency:
 <dependency>
   <groupId>xyz.gghost</groupId>
   <artifactId>jskype</artifactId>
-  <version>3.6</version>
+  <version>3.6.1</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -64,7 +64,6 @@ Example user/pass:
 SkypeAPI skype = new SkypeAPI("NotGhostBot", "Password");
 skype.login();
 ```
-If getting groups is taking a while, you can add another boolean to enable experimental multithreading. It isn't recommended but is useful in bot environments
 
 #Sending chat messages
 Sending a message to all contacts example:

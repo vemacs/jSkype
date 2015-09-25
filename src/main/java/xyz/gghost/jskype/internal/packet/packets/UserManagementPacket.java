@@ -17,12 +17,6 @@ public class UserManagementPacket {
      * @return true = done / false = no perm
      */
     public boolean kickUser(String groupId, String username) {
-        //TODO: remove... debug mode stuff
-        if (username.equals("gghosted") || username.equals("notghostbot")){
-            api.getGroupById(groupId).sendMessage(Chat.bold("jSkype debug mode> ") + "Can't kick Ghost whilst you're running test BETA versions of jSkype");
-            api.getGroupById(groupId).sendMessage(Chat.bold("jSkype debug mode> ") + "Reason: attempting to fix the permission kick bug");
-            return false;
-        }
         PacketBuilder packet = new PacketBuilder(api);
         packet.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + groupId + "/members/8:" + username);
         packet.setType(RequestType.DELETE);

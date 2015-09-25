@@ -8,6 +8,7 @@ import xyz.gghost.jskype.event.EventManager;
 import xyz.gghost.jskype.internal.auth.Auth;
 import xyz.gghost.jskype.exception.BadResponseException;
 import xyz.gghost.jskype.exception.NoPendingContactsException;
+//import xyz.gghost.jskype.internal.calling.CallingMaster;
 import xyz.gghost.jskype.internal.impl.UserImpl;
 import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
@@ -60,7 +61,7 @@ public class SkypeAPI {
     private Thread pinger;
     private ConvoUpdater convoUpdater;
     private PendingContactEventThread pendingContactThread;
-
+//    @Getter private CallingMaster callingMaster = new CallingMaster();
     public SkypeAPI(String username, String password) {
         this.username = username;
         this.password = password;

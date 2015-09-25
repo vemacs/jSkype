@@ -96,7 +96,7 @@ public final class Chat {
      * @return Formatted text
      */
     public static String encodeRawText(String text) {
-        return StringEscapeUtils.escapeJson(StringEscapeUtils.escapeHtml4(text));
+        return StringEscapeUtils.escapeXml11((StringEscapeUtils.escapeJson(text)));
     }
 
     /**
