@@ -11,6 +11,7 @@ jSkype creation started when skype4web was released, however at the time I was m
 - Format messages
 - Accept contact requests
 - Send contact requests
+- Change a groups topic
 - User information
 - Search Skype's DB
 - Change your profile picture
