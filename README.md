@@ -85,7 +85,9 @@ message.editMessage("");
 ```
 ## Formatting messages
 TODO: rewrite
+
 OLD: The "MessageBuilderUtils" class is a utilities class for formatting. To format "hi" in bold, you can do "MessageBuilderUtils.bold("hi")", which will return "hi" with the html Skype tags. If you wanted "hi" to be in bold and blink, you can do "MessageBuilderUtils.bold(MessageBuilderUtils.blink("hi"))". When sending raw messages, I highly suggest you encode them using MessageBuilderUtils#encodeRawText
+
 NEW: MessageBuilder is the builder class for constructing string that is safe to pass to Group#sendMessage. In order to add text to the message builder, use #addText. Only use #addHtml with past outputs from #build and html code you know is safe. If you'd like to add two message builders together, simply builderA.build() + builderB.build() would work, however I recommend you to pass the old build output to the constructor of the new builder instance, if you want to make a clean message builder. 
 
 #Example event handler usage:
