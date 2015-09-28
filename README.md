@@ -10,7 +10,7 @@ jSkype creation started when skype4web was released, however at the time I was m
 - Send messages
 - Format messages
 - Accept contact requests
-- Send contact requests
+- Send contact requests (https://github.com/NotGGhost/jSkype/wiki/I-forgot-to-readd-accepting-contracts,-In-the-meanwhile...)
 - Change a groups topic
 - User information
 - Search Skype's DB
