@@ -17,7 +17,8 @@ jSkype creation started when skype4web was released, however at the time I was m
 - Change your profile picture
 - Set your online status
 - Get info about yourself
-- Always online (Doesn't break after 2 days plus can survive internet shortage)
+- Always online (Doesn't break after 2 days plus can survive internet shortage) 
+- -Internet shortage = broken in 3.5  --  2 days should be fine (issue 20)
  
 #Events
 - Edit message (UserChatEvent#isEdited)
