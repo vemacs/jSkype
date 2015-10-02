@@ -261,20 +261,20 @@ public class SkypeAPI {
         pb.makeRequest();
         return new GroupInfoPacket(this).getGroup(idLong);
     }
-    public Group createNewGroupWithUsers(ArrayList<String> users){
-        JSONObject members = new JSONObject()
-                .put("id", "8:" + getUsername())
-                .put("role", "Admin");
 
-        for (String user : users) {
-            members.put("id", "8:" + user);
-            members.put("role", "User");
-        }
+    public Group createNewGroupWithUsers(ArrayList<String> users){
+        JSONArray members = new JSONArray().put(
+                new JSONObject()
+                        .put("id", "8:" + getUsername())
+                        .put("role", "Admin")
+        );
+
+        for (String user : users)
+            members.put(new JSONObject().put("id", "8:" + user)
+                    .put("role", "User"));
 
         JSONObject json = new JSONObject()
-                .put("members", new JSONArray()
-                                .put(members)
-                );
+                .put("members", members);
         PacketBuilder buildGroup = new PacketBuilder(this);
         buildGroup.setData(json.toString());
         buildGroup.setUrl("https://client-s.gateway.messenger.live.com/v1/threads");
@@ -306,6 +306,7 @@ public class SkypeAPI {
         reJoinGroup(new JSONObject(b).getString("ThreadId"));
 
     }
+
     public void reJoinGroup(Group group){
         reJoinGroup(group.getLongId());
     }

@@ -1,9 +1,8 @@
 package xyz.gghost.jskype.events;
 
 import lombok.Getter;
-import xyz.gghost.jskype.event.Event;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.packet.packets.GetPendingContactsPacket;
+import xyz.gghost.jskype.event.Event;
 
 @Getter
 public class UserPendingContactRequestEvent extends Event {
@@ -12,7 +11,7 @@ public class UserPendingContactRequestEvent extends Event {
         this.user = user;
     }
 
-    public void accept(SkypeAPI skype) {
-        new GetPendingContactsPacket(skype).acceptRequest(user);
+    public void accept(SkypeAPI api){
+        api.acceptContactRequest(user);
     }
 }

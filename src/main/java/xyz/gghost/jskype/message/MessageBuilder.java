@@ -19,7 +19,7 @@ public class MessageBuilder {
         blink = a;
         return this;
     }
-    
+
     public MessageBuilder setBold(boolean a){
         bold = a;
         return this;
