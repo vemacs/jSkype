@@ -18,6 +18,8 @@ jSkype creation started when skype4web was released, however at the time I was m
 - Set your online status
 - Get info about yourself
 - Always online (Doesn't break after 2 days plus can survive internet shortage)
+- Create and join groups
+- Promote and demote users
  
 #Events
 - Edit message (UserChatEvent#isEdited)
