@@ -1,6 +1,7 @@
 package xyz.gghost.jskype.internal.packet.packets;
 
 
+import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
@@ -23,7 +24,11 @@ public class SendMessagePacket {
         if (edit == null || msg == null)
             return msg;
 
-        packet.setData("{\"content\":\"" + edit.replace("\"", "\\\"") + "\",\"messagetype\":\"RichText\",\"contenttype\":\"text\",\"skypeeditedid\":\"" + msg.getId() + "\"}");
+        packet.setData(new JSONObject().put("content", msg.getMessage().replace("\"", "\\\""))
+                .put("messagetype", "RichText")
+                .put("contenttype", "text")
+                .put("skypeeditedid", msg.getId())
+                .toString());
 
         packet.setUrl(msg.getUpdateUrl());
         packet.makeRequest();
@@ -61,7 +66,12 @@ public class SendMessagePacket {
 
         PacketBuilder packet = new PacketBuilder(api);
         packet.setType(RequestType.POST);
-        packet.setData("{\"content\":\"" + msg.getMessage().replace("\"", "\\\"") + "\",\"messagetype\":\"RichText\",\"contenttype\":\"text\",\"clientmessageid\":\"" + id + "\"}");
+
+        packet.setData(new JSONObject().put("content", msg.getMessage().replace("\"", "\\\""))
+                .put("messagetype", "RichText")
+                .put("contenttype", "text")
+                .put("clientmessageid", id)
+                .toString());
 
         packet.setUrl(url);
         packet.makeRequest();

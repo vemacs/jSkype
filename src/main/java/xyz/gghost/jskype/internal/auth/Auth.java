@@ -32,7 +32,6 @@ public class Auth {
         String pie = htmlIds.split("name=\"pie\" id=\"pie\" value=\"")[1].split("\"")[0];
         String etm = htmlIds.split("name=\"etm\" id=\"etm\" value=\"")[1].split("\"")[0];
 
-        //noinspection StringBufferReplaceableByString
         StringBuilder data = new StringBuilder();
         data.append("username=").append(URLEncoder.encode(username));
         data.append("&password=").append(URLEncoder.encode(password));
@@ -59,6 +58,7 @@ public class Auth {
         return Jsoup.parse(html);
 
     }
+
     public void login(SkypeAPI api) throws Exception {
         Document loginResponse = postData(api.getUsername(), api.getPassword(), api);
         handle(loginResponse, api);
@@ -91,9 +91,7 @@ public class Auth {
                 throw new FailedToLoginException("Could not find error message. Dumping entire page. \n" + loginResponseDocument.html());
             }
         }catch (FailedToLoginException  e){
-            if (!account.isReloggin())
-                throw e;
-            account.stop();
+            throw e;
         }catch (RecaptchException e){
             if (!account.isReloggin())
                 throw e;

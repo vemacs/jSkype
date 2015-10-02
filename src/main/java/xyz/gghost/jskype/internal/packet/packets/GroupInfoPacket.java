@@ -37,6 +37,7 @@ public class GroupInfoPacket {
 
         GroupImpl group = new GroupImpl(api, new JSONObject(data).getString("id"));
 
+
         JSONObject properties = new JSONObject(data).getJSONObject("properties");
         if (!properties.isNull("topic"))
             group.setTopic(properties.getString("topic"));
@@ -54,7 +55,7 @@ public class GroupInfoPacket {
                 User ussr = api.getSimpleUser(member.getString("id").split("8:")[1]);
                 if (!member.getString("role").equals("User"))
                     role = GroupUser.Role.MASTER;
-                group.getClients().add(new GroupUser(ussr, role));
+                group.getClients().add(new GroupUser(ussr, role, group));
             } catch (Exception e){
                 api.log("Failed to get a members info");
             }
@@ -85,7 +86,7 @@ public class GroupInfoPacket {
                     if (!member.getString("role").equals("User"))
                         role = GroupUser.Role.MASTER;
 
-                    GroupUser gu = new GroupUser(ussr, role);
+                    GroupUser gu = new GroupUser(ussr, role, new GroupImpl(api, id));
                     groupMembers.add(gu);
                 } catch (Exception e){
                     api.log("Failed to get a members info");

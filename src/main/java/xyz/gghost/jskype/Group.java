@@ -12,8 +12,11 @@ public interface Group {
     void kick(String usr);
     void add(String usr);
     void leave();
+    void setAdmin(String user, boolean admin);
+    void changeTopic(String topic);
     boolean isAdmin();
     boolean isAdmin(String usr);
+    boolean isUserChat();
     MessageHistory getMessageHistory();
     String getId();
     String getPictureUrl();
@@ -23,7 +26,5 @@ public interface Group {
     Message sendMessage(String msg);
     Message sendImage(File url);
     Message sendImage(URL url);
-    void changeTopic(String topic);
     List<GroupUser> getClients();
-    boolean isUserChat();
 }

@@ -14,24 +14,28 @@ public class Message {
     private boolean edited = false;
     private String time;
     private String id;
+    private int timestamp;
 
     public Message(String message) {
         this.message = message;
     }
 
-    public Message() {}
+    public Message() {
+    }
 
 
     /**
      * Edit the message
      */
-    public Message editMessage(SkypeAPI api, String edit){
+    public Message editMessage(SkypeAPI api, String edit) {
         setMessage(edit);
         edited = true;
         return new SendMessagePacket(api).editMessage(this, message);
     }
+
     /**
      * Once setMessage has edited the message locally, this will update the edit on skypes servers
+     *
      * @param api SkypeAPI
      * @return the message
      */
@@ -39,4 +43,5 @@ public class Message {
         edited = true;
         return new SendMessagePacket(api).editMessage(this, message);
     }
+
 }

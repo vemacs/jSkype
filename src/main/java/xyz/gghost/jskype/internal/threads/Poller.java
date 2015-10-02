@@ -106,9 +106,9 @@ public class Poller extends Thread {
                     }
 
                     //thread update
-                    if (object.getString("resourceType").equals("ThreadUpdate")) {
-                        shittyJoinLeave(object);
-                    }
+                    if (object.getString("resourceType").equals("ThreadUpdate"))
+                        hackyThreadUpdate(object);
+
 
                     //resource json
                     JSONObject resource = object.getJSONObject("resource");
@@ -198,13 +198,14 @@ public class Poller extends Thread {
                     }
                 }
             }catch (Exception e) {
-                System.out.println("Failed to process data from skype.\nMessage: "  + object + "Data: " + data + "\nError: " + e.getMessage());
+                api.log("Failed to process data from skype.\nMessage: " + object + "Data: " + data + "\nError: " + e.getMessage());
+                api.log("\n\nIs this a new convo?\nWait a few seconds!");
                 e.printStackTrace();
             }
         }
     }
 
-    public void shittyJoinLeave(JSONObject object){
+    public void hackyThreadUpdate(JSONObject object){
         Group oldGroup = null;
 
         ArrayList<String> oldUsers2 = new ArrayList<String>();
@@ -214,14 +215,16 @@ public class Poller extends Thread {
         String shortId = object.getString("resourceLink").split("19:")[1].split("@")[0];
         for (Group groups : api.getGroups()) {
             if (groups.getId().equals(shortId)) {
-                for (GroupUser usr : groups.getClients()) { //NULL POINTER HERE
+                for (GroupUser usr : groups.getClients()) {
                     oldUsers.add(usr.getUser().getUsername().toLowerCase());
                     oldUsers2.add(usr.getUser().getUsername().toLowerCase());
                 }
                 oldGroup = groups;
             }
         }
+
         if (oldGroup != null) {
+
             JSONObject resource = object.getJSONObject("resource");
 
             String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
@@ -260,25 +263,24 @@ public class Poller extends Thread {
                                 if (role != users.role)
                                     api.getEventManager().executeEvent(new UserRoleChangedEvent(oldGroup, users.getUser(), role));
 
-                    GroupUser gu = new GroupUser(ussr, role);
+                    GroupUser gu = new GroupUser(ussr, role, group);
                     group.getClients().add(gu);
-                } catch (Exception ignored) {
-                }
+
+                } catch (Exception ignored) {}
             }
 
-
-            //completely reupdate
-            api.getGroups().remove(oldGroup);
-            api.getGroups().add(group);
 
             oldUsers.removeAll(newUsers);
             newUsers.removeAll(oldUsers2);
 
-            //join / leave events
+
             for (String old : oldUsers)
                 api.getEventManager().executeEvent(new UserLeaveEvent(group, new GetProfilePacket(api).getUser(old)));
+
             for (String news : newUsers)
                 api.getEventManager().executeEvent(new UserJoinEvent(group, new GetProfilePacket(api).getUser(news)));
+
+            api.updateGroup(group);
         }
 
     }

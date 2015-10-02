@@ -23,10 +23,16 @@ import java.util.List;
  */
 public class GroupImpl implements Group {
 
-    @Setter @Getter private String topic;
-    @Setter @Getter private String id;
-    @Setter @Getter private String pictureUrl;
+    @Setter @Getter private String topic = "";
+    @Setter @Getter private String id = "";
+    @Setter @Getter private String pictureUrl = "";
     private SkypeAPI api;
+    @Getter private List<GroupUser> clients = new ArrayList<GroupUser>();
+
+    public GroupImpl(SkypeAPI api, String longId){
+        this.id = longId;
+        this.api = api;
+    }
 
     public MessageHistory getMessageHistory(){
         if(api.getA().containsKey(id))
@@ -36,17 +42,20 @@ public class GroupImpl implements Group {
         return history;
     }
 
-    @Getter private List<GroupUser> clients = new ArrayList<GroupUser>();
-    public GroupImpl(SkypeAPI api, String longId){
-        this.id = longId;
-        this.api = api;
-    }
     public void kick(String usr) {
         new UserManagementPacket(api).kickUser(getLongId(), usr);
     }
 
     public void add(String usr) {
         new UserManagementPacket(api).addUser(getLongId(), usr);
+    }
+
+    public void setAdmin(String usr, boolean admin)
+    {
+        if (admin) {
+            new UserManagementPacket(api).promoteUser(getLongId(), usr);
+        }else
+            add(usr);
     }
 
     public String getId() {
@@ -81,12 +90,15 @@ public class GroupImpl implements Group {
     public List<GroupUser> getClients() {
         return clients;
     }
+
     public String getTopic() {
         return topic;
     }
+
     public boolean isUserChat(){
         return !getLongId().contains("19:");
     }
+
     public void leave(){
         kick(api.getUsername());
     }

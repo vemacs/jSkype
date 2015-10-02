@@ -88,9 +88,11 @@ public class PacketBuilder {
                         e.printStackTrace();
                     }
                 }
+
                 //GetProfile will handle the debugging info
                 if (url.equals("https://api.skype.com/users/self/contacts/profiles"))
                     return null;
+
                 //Debug info
                 api.log("Error contacting skype\nUrl: " + url + "\nCode: " + code + "\nData: " + data + "\nType: " + type);
                 for (Header header : headers)

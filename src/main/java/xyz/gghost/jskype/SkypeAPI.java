@@ -9,7 +9,10 @@ import xyz.gghost.jskype.internal.auth.Auth;
 import xyz.gghost.jskype.exception.BadResponseException;
 import xyz.gghost.jskype.exception.NoPendingContactsException;
 //import xyz.gghost.jskype.internal.calling.CallingMaster;
+import xyz.gghost.jskype.internal.impl.GroupImpl;
 import xyz.gghost.jskype.internal.impl.UserImpl;
+import xyz.gghost.jskype.internal.packet.packets.GroupInfoPacket;
+import xyz.gghost.jskype.internal.packet.packets.UserManagementPacket;
 import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
@@ -76,7 +79,7 @@ public class SkypeAPI {
     }
 
     public void log(String msg) {
-        //TODO: custom logger
+
         if (allowLogging)
             System.out.println(msg);
     }
@@ -215,7 +218,7 @@ public class SkypeAPI {
             //No point of making a new class just for this one small method
             PacketBuilderUploader uploader = new PacketBuilderUploader(this);
             uploader.setSendLoginHeaders(true);
-            uploader.setUrl("https://api.skype.com/users/itsghostbot/profile/avatar");
+            uploader.setUrl("https://api.skype.com/users/" + username + "/profile/avatar");
             uploader.setType(RequestType.PUT);
             uploader.makeRequest(new FileInputStream(url));
         }catch (Exception e){
@@ -227,7 +230,7 @@ public class SkypeAPI {
             //No point of making a new class just for this one small method
             PacketBuilderUploader uploader = new PacketBuilderUploader(this);
             uploader.setSendLoginHeaders(true);
-            uploader.setUrl("https://api.skype.com/users/itsghostbot/profile/avatar");
+            uploader.setUrl("https://api.skype.com/users/" + username + "/profile/avatar");
             uploader.setType(RequestType.PUT);
             URL image = new URL(url);
             InputStream data = image.openStream();
@@ -238,8 +241,83 @@ public class SkypeAPI {
         }
     }
 
+    public Group createNewGroup(){
+        JSONObject json = new JSONObject()
+                .put("members", new JSONArray()
+                                .put(new JSONObject()
+                                        .put("id", "8:" + getUsername())
+                                        .put("role", "Admin"))
+                );
+        PacketBuilder buildGroup = new PacketBuilder(this);
+        buildGroup.setData(json.toString());
+        buildGroup.setUrl("https://client-s.gateway.messenger.live.com/v1/threads");
+        buildGroup.setType(RequestType.POST);
+        buildGroup.makeRequest();
+        String idLong = buildGroup.getCon().getHeaderFields().get("Location").get(0).split("/threads/")[1];
+        PacketBuilder pb = new PacketBuilder(this);
+        pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + idLong + "/properties?name=topic");
+        pb.setType(RequestType.PUT);
+        pb.setData("{\"topic\":\"New Group!\"}");
+        pb.makeRequest();
+        return new GroupInfoPacket(this).getGroup(idLong);
+    }
+    public Group createNewGroupWithUsers(ArrayList<String> users){
+        JSONObject members = new JSONObject()
+                .put("id", "8:" + getUsername())
+                .put("role", "Admin");
+
+        for (String user : users) {
+            members.put("id", "8:" + user);
+            members.put("role", "User");
+        }
+
+        JSONObject json = new JSONObject()
+                .put("members", new JSONArray()
+                                .put(members)
+                );
+        PacketBuilder buildGroup = new PacketBuilder(this);
+        buildGroup.setData(json.toString());
+        buildGroup.setUrl("https://client-s.gateway.messenger.live.com/v1/threads");
+        buildGroup.setType(RequestType.POST);
+        buildGroup.makeRequest();
+        String idLong = buildGroup.getCon().getHeaderFields().get("Location").get(0).split("/threads/")[1];
+        PacketBuilder pb = new PacketBuilder(this);
+        pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + idLong + "/properties?name=topic");
+        pb.setType(RequestType.PUT);
+        pb.setData("{\"topic\":\"New Group!\"}");
+        pb.makeRequest();
+        return new GroupInfoPacket(this).getGroup(idLong);
+    }
+
+    public void joinInviteLink(String url){
+        PacketBuilder getId = new PacketBuilder(this);
+        System.out.println(url);
+        getId.setUrl("https://join.skype.com/api/v1/meetings/" + url.split(".com/")[1]);
+        getId.setType(RequestType.GET);
+        String a = getId.makeRequest();
+        if (a == null)
+            return;
+        PacketBuilder getLongId = new PacketBuilder(this);
+        getLongId.setUrl("https://api.scheduler.skype.com/conversation/" + new JSONObject(a).get("longId"));
+        getLongId.setType(RequestType.GET);
+        String b = getLongId.makeRequest();
+        if (b == null)
+            return;
+        reJoinGroup(new JSONObject(b).getString("ThreadId"));
+
+    }
+    public void reJoinGroup(Group group){
+        reJoinGroup(group.getLongId());
+    }
+    public void reJoinGroup(String longId){
+        new UserManagementPacket(this).addUser(longId, getUsername());
+    }
+
     public ArrayList<User> getContactRequests() throws BadResponseException, NoPendingContactsException {
         return new GetPendingContactsPacket(this).getPending();
+    }
+    public void acceptContactRequest(String username){
+        new GetPendingContactsPacket(this).acceptRequest(username);
     }
 
 }

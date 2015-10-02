@@ -30,6 +30,7 @@ public class MessageHistory {
         String nextUrl = this.nextUrl;
         if (nextUrl == null)
             nextUrl = "https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + longId + "/messages?startTime=0&pageSize=51&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread";
+
         PacketBuilder builder = new PacketBuilder(api);
         builder.setType(RequestType.GET);
         builder.setUrl(nextUrl);
@@ -53,11 +54,13 @@ public class MessageHistory {
             if(jsonMessage.getString("type").equals("Message")) {
                 Message message = new Message(FormatUtils.decodeText(jsonMessage.getString("content")));
                 User user;
+
                 try {
                     user = getUser(jsonMessage.getString("from").split("8:")[1], convo);
                 }catch (Exception e ){
                     continue;
                 }
+
                 String content = "";
                 if(!jsonMessage.isNull("content"))
                     content = FormatUtils.decodeText(jsonMessage.getString("content"));
@@ -68,6 +71,7 @@ public class MessageHistory {
                     message.setId(jsonMessage.getString("skypeeditedid"));
                     message.setEdited(true);
                 }
+
                 message.setSender(user);
                 message.setTime(jsonMessage.getString("originalarrivaltime"));
                 message.setUpdateUrl("https://db3-client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + longId + "/messages");
