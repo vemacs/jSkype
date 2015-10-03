@@ -70,7 +70,7 @@ public class Auth {
     }
 
 
-    public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, RecaptchException {
+    public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, CaptchaException {
         try {
             Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
             if (inputs.size() > 0) {
@@ -92,7 +92,7 @@ public class Auth {
             }
         }catch (FailedToLoginException  e){
             throw e;
-        }catch (RecaptchException e){
+        }catch (CaptchaException e){
             if (!account.isReloggin())
                 throw e;
             account.stop();
