@@ -77,7 +77,7 @@ public class Auth {
                 account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
             } else if (loginResponseDocument.html().contains("https://client.hip.live.com/GetHIP/")) {
                 account.log("Failed to connect due to a recaptcha!");
-                throw new CaptchException();
+                throw new CaptchaException();
             } else {
                 Elements elements = loginResponseDocument.select(".message_error");
                 if (elements.size() > 0) {
