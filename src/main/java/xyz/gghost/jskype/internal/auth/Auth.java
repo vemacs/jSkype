@@ -75,7 +75,7 @@ public class Auth {
             Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
             if (inputs.size() > 0) {
                 account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
-            } else if (loginResponseDocument.html().contains("https://www.google.com/recaptcha/")) {
+            } else if (loginResponseDocument.html().contains("https://client.hip.live.com/GetHIP/")) {
                 account.log("Failed to connect due to a recaptcha!");
                 throw new RecaptchException();
             } else {
