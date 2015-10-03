@@ -70,14 +70,14 @@ public class Auth {
     }
 
 
-    public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, RecaptchException {
+    public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, CaptchaException {
         try {
             Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
             if (inputs.size() > 0) {
                 account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
-            } else if (loginResponseDocument.html().contains("https://www.google.com/recaptcha/")) {
+            } else if (loginResponseDocument.html().contains("https://client.hip.live.com/GetHIP/")) {
                 account.log("Failed to connect due to a recaptcha!");
-                throw new RecaptchException();
+                throw new CaptchaException();
             } else {
                 Elements elements = loginResponseDocument.select(".message_error");
                 if (elements.size() > 0) {
@@ -92,7 +92,7 @@ public class Auth {
             }
         }catch (FailedToLoginException  e){
             throw e;
-        }catch (RecaptchException e){
+        }catch (CaptchaException e){
             if (!account.isReloggin())
                 throw e;
             account.stop();
