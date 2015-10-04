@@ -71,11 +71,15 @@ public class SkypeAPI {
         this.password = password;
     }
 
-    public void login() throws Exception {
+    // Returns SkypeAPI instance for ease, 
+    // e.g. SkypeAPI skype = new SkypeAPI(user, pass).login();
+    public SkypeAPI login() throws Exception {
         new Auth().login(this);
         reloggin = true;
         init();
         updateStatus(OnlineStatus.ONLINE);
+        
+        return this;
     }
 
     public void log(String msg) {
