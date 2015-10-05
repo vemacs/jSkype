@@ -40,7 +40,7 @@ jSkype creation started when skype4web was released, however at the time I was m
 #Downloads, Javadocs, etc
 JavaDocs: http://gghost.xyz/JavaDocs/jSkype
 
-Maven: http://maven.gghost.xyz OR http://ghosted.me/maven (outdated!)
+Maven: http://maven.gghost.xyz OR http://ghosted.me/maven
 
 Repository:
 ```
