@@ -35,6 +35,7 @@ jSkype creation started when skype4web was released, however at the time I was m
 - UserNewMovieAdsPingEvent
 - UserRoleChangedEvent
 - UserStatusChangedEvent (online status)
+- APILoadedEvent
 
 #Downloads, Javadocs, etc
 JavaDocs: http://gghost.xyz/JavaDocs/jSkype
