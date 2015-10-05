@@ -36,54 +36,55 @@ import java.util.UUID;
 
 public class SkypeAPI {
 
-    @Getter
-    private List<Group> groups = new ArrayList<Group>();
-    @Getter
-    private List<User> contacts = new ArrayList<User>();
-    @Getter
-    private LoginTokens loginTokens = new LoginTokens();
-    @Getter
-    private EventManager eventManager = new EventManager();
-    @Getter
-    private HashMap<String, MessageHistory> a = new HashMap<String, MessageHistory>();  //Could use an interface to hide this but its not worth it
-    @Setter
-    @Getter
-    private boolean allowLogging = true;
-    @Getter
-    private String username;
-    @Getter
-    UUID uuid = UUID.randomUUID();
-    @Getter
-    private String password;
-    @Getter
-    @Setter
-    private boolean loaded;
+    @Getter private List<Group> groups = new ArrayList<Group>();
+    @Getter private List<User> contacts = new ArrayList<User>();
+    @Getter private LoginTokens loginTokens = new LoginTokens();
+    @Getter private EventManager eventManager = new EventManager();
+    @Getter private HashMap<String, MessageHistory> a = new HashMap<String, MessageHistory>();  //Could use an interface to hide this but its not worth it
+    @Setter @Getter private boolean allowLogging = true;
+    @Getter private String username;
+    @Getter UUID uuid = UUID.randomUUID();
+    @Getter private String password;
+    @Getter @Setter private boolean loaded;
     private OnlineStatus s = OnlineStatus.ONLINE;
     private Poller poller;
     private Thread contactUpdater;
     private Thread pinger;
     private ConvoUpdater convoUpdater;
     private PendingContactEventThread pendingContactThread;
+    @Getter @Setter private boolean debugMode = false;
     @Getter @Setter private boolean reloggin = false;
-//    @Getter private CallingMaster callingMaster = new CallingMaster();
+
+
     public SkypeAPI(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public void login() throws Exception {
+    /**
+     * Login to skype
+     * @return "Builder"
+     * @throws Exception Failed to login/badusernamepassword exception
+     */
+    public SkypeAPI login() throws Exception {
         new Auth().login(this);
         reloggin = true;
         init();
         updateStatus(OnlineStatus.ONLINE);
+        return this;
     }
 
+    /**
+     * Make shift logger... rly bad. Just System.out.println if SkypeAPI#allowLogging is true
+     */
     public void log(String msg) {
-
         if (allowLogging)
             System.out.println(msg);
     }
 
+    /**
+     * Start threads
+     */
     private void init() {
         pinger = new Ping(this);
         pinger.start();
@@ -97,6 +98,10 @@ public class SkypeAPI {
         convoUpdater.start();
     }
 
+    /**
+     * Attempt to stop all skype threads
+     * @return
+     */
     public void stop() {
         poller.stopThreads();
         pinger.stop();
@@ -106,10 +111,18 @@ public class SkypeAPI {
         pendingContactThread.stop();
     }
 
+    /**
+     * Get your current online status
+     * @return
+     */
     public OnlineStatus getOnlineStatus() {
         return s;
     }
-    //TODO: interface
+
+    /**
+     * Do not use
+     * @param status
+     */
     public void s(OnlineStatus status) {
         s = status;
     }
@@ -137,6 +150,12 @@ public class SkypeAPI {
         }
         return null;
     }
+
+    /**
+     * Get the group by shorter id
+     * @param shortId
+     * @return null if the api hasn't loaded or the group is unknown to us
+     */
     public Group getGroupById(String shortId){
         for (Group group : groups) {
             if (group.getId().equals(shortId))
@@ -144,6 +163,11 @@ public class SkypeAPI {
         }
         return null;
     }
+
+    /**
+     * Set your online status
+     * @param a
+     */
     public void updateStatus(OnlineStatus a){
         PacketBuilder packet = new PacketBuilder(this);
         packet.setData("{\"status\":\"" +  Character.toString(a.name().charAt(0)).toUpperCase() + (a.name().substring(1).toLowerCase()) +"\"}");
@@ -151,6 +175,9 @@ public class SkypeAPI {
         packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/presenceDocs/messagingService");
         packet.makeRequest();
     }
+    /**
+     * Update a group object in the recent array
+     */
     public void updateGroup(Group group){
         Group oldGroup = null;
         for (Group groupA : groups){
@@ -161,6 +188,9 @@ public class SkypeAPI {
             getGroups().remove(oldGroup);
         getGroups().add(group);
     }
+    /**
+     * Update a User object in the contacts array
+     */
     public void updateContact(User newUser){
         User oldUser = null;
         for (User user : getContacts()){
@@ -225,6 +255,9 @@ public class SkypeAPI {
             e.printStackTrace();
         }
     }
+    /**
+     * Update your profile picture from a url
+     */
     public void changePictureFromUrl(String url){
         try {
             //No point of making a new class just for this one small method
@@ -241,6 +274,9 @@ public class SkypeAPI {
         }
     }
 
+    /**
+     * Create a new group
+     */
     public Group createNewGroup(){
         JSONObject json = new JSONObject()
                 .put("members", new JSONArray()
@@ -262,6 +298,9 @@ public class SkypeAPI {
         return new GroupInfoPacket(this).getGroup(idLong);
     }
 
+    /**
+     * Attempts to make a group with users... might not work
+     */
     public Group createNewGroupWithUsers(ArrayList<String> users){
         JSONArray members = new JSONArray().put(
                 new JSONObject()
@@ -289,6 +328,9 @@ public class SkypeAPI {
         return new GroupInfoPacket(this).getGroup(idLong);
     }
 
+    /**
+     * Join a group from a skype invite link
+     */
     public void joinInviteLink(String url){
         PacketBuilder getId = new PacketBuilder(this);
         System.out.println(url);
@@ -307,13 +349,27 @@ public class SkypeAPI {
 
     }
 
+    /**
+     * Kicked and the group is still joionable? Use this method!
+     */
     public void reJoinGroup(Group group){
         reJoinGroup(group.getLongId());
     }
+
+    /**
+     * Join a joinable group from it's long id
+     * @param longId
+     */
     public void reJoinGroup(String longId){
         new UserManagementPacket(this).addUser(longId, getUsername());
     }
 
+    /**
+     * Get contact requests
+     * @return
+     * @throws BadResponseException
+     * @throws NoPendingContactsException
+     */
     public ArrayList<User> getContactRequests() throws BadResponseException, NoPendingContactsException {
         return new GetPendingContactsPacket(this).getPending();
     }

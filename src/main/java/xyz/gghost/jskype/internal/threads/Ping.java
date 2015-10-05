@@ -1,12 +1,13 @@
 package xyz.gghost.jskype.internal.threads;
 
 import lombok.Getter;
+import org.apache.commons.lang3.StringEscapeUtils;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.packets.PingPacket;
 
 public class Ping extends Thread {
     @Getter
-    private final PingPacket ping;
+    private PingPacket ping;
 
     public Ping(SkypeAPI api) {
         ping = new PingPacket(api);

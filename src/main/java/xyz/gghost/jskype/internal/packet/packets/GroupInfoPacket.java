@@ -22,7 +22,6 @@ public class GroupInfoPacket {
         this.api = api;
     }
 
-
     public Group getGroup(String longId){
         List<GroupUser> groupMembers = new ArrayList<GroupUser>();
 
@@ -52,12 +51,17 @@ public class GroupInfoPacket {
             JSONObject member = membersArray.getJSONObject(ii);
             try {
                 GroupUser.Role role = GroupUser.Role.USER;
+
                 User ussr = api.getSimpleUser(member.getString("id").split("8:")[1]);
+
                 if (!member.getString("role").equals("User"))
                     role = GroupUser.Role.MASTER;
+
                 group.getClients().add(new GroupUser(ussr, role, group));
             } catch (Exception e){
                 api.log("Failed to get a members info");
+                if (api.isDebugMode())
+                    e.printStackTrace();
             }
         }
         return group;
@@ -82,14 +86,19 @@ public class GroupInfoPacket {
                 try {
 
                     GroupUser.Role role = GroupUser.Role.USER;
-                    User ussr = api.getSimpleUser(member.getString("id").split("8:")[1]);
+
+                    User usr = api.getSimpleUser(member.getString("id").split("8:")[1]);
                     if (!member.getString("role").equals("User"))
                         role = GroupUser.Role.MASTER;
 
-                    GroupUser gu = new GroupUser(ussr, role, new GroupImpl(api, id));
+                    GroupUser gu = new GroupUser(usr, role, new GroupImpl(api, id));
+
                     groupMembers.add(gu);
+
                 } catch (Exception e){
                     api.log("Failed to get a members info");
+                    if (api.isDebugMode())
+                        e.printStackTrace();
                 }
             }
             return groupMembers;

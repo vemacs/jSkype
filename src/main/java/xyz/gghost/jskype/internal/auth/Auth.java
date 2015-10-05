@@ -70,14 +70,14 @@ public class Auth {
     }
 
 
-    public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, RecaptchException {
+    public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, RecaptchaException {
         try {
             Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
             if (inputs.size() > 0) {
                 account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
-            } else if (loginResponseDocument.html().contains("https://www.google.com/recaptcha/")) {
+            } else if (loginResponseDocument.html().contains("var skypeHipUrl = \"https://clien")) {
                 account.log("Failed to connect due to a recaptcha!");
-                throw new RecaptchException();
+                throw new RecaptchaException();
             } else {
                 Elements elements = loginResponseDocument.select(".message_error");
                 if (elements.size() > 0) {
@@ -92,7 +92,7 @@ public class Auth {
             }
         }catch (FailedToLoginException  e){
             throw e;
-        }catch (RecaptchException e){
+        }catch (RecaptchaException e){
             if (!account.isReloggin())
                 throw e;
             account.stop();
@@ -100,7 +100,7 @@ public class Auth {
     }
 
 
-    public void prepare(SkypeAPI api) throws BadUsernamePassword, FailedToLoginException{
+    public void prepare(SkypeAPI api) throws BadUsernamePasswordException, FailedToLoginException{
         authLogin(api);
         if (!reg(api)) {
             api.log("Failed to get update data from skype due to a login error... Attempting to relogin, however this wont work until the auto pinger kicks in.");

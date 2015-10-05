@@ -115,10 +115,15 @@ public class Poller extends Thread {
 
                     //Get topic update
                     if (!resource.isNull("messagetype") && resource.getString("messagetype").equals("ThreadActivity/TopicUpdate")) {
-
-                        String topic = resource.getString("content").split("<value>")[1].split("<\\/value>")[0];
-                        topic = FormatUtils.decodeText(topic);
-
+                        String topic = "";
+                        try {
+                            topic = resource.getString("content").split("<value>")[1].split("<\\/value>")[0];
+                            topic = FormatUtils.decodeText(topic);
+                        }catch(Exception e){
+                            for (GroupUser user : chat.getClients())
+                                topic = topic + ", " + user.getUser().getUsername();
+                            topic = topic.replaceFirst(", ", "");
+                        }
                         String username = resource.getString("content").split("<initiator>8:")[1].split("<\\/initiator>")[0];
                         String oldTopic = api.getGroupById(chat.getId()).getTopic();
 
@@ -206,83 +211,95 @@ public class Poller extends Thread {
     }
 
     public void hackyThreadUpdate(JSONObject object){
-        Group oldGroup = null;
+        try {
+            Group oldGroup = null;
 
-        ArrayList<String> oldUsers2 = new ArrayList<String>();
-        ArrayList<String> oldUsers = new ArrayList<String>();
-        ArrayList<String> newUsers = new ArrayList<String>();
+            ArrayList<String> oldUsers2 = new ArrayList<String>();
+            ArrayList<String> oldUsers = new ArrayList<String>();
+            ArrayList<String> newUsers = new ArrayList<String>();
 
-        String shortId = object.getString("resourceLink").split("19:")[1].split("@")[0];
-        for (Group groups : api.getGroups()) {
-            if (groups.getId().equals(shortId)) {
-                for (GroupUser usr : groups.getClients()) {
-                    oldUsers.add(usr.getUser().getUsername().toLowerCase());
-                    oldUsers2.add(usr.getUser().getUsername().toLowerCase());
+            String shortId = object.getString("resourceLink").split("19:")[1].split("@")[0];
+            for (Group groups : api.getGroups()) {
+                if (groups.getId().equals(shortId)) {
+                    for (GroupUser usr : groups.getClients()) {
+                        oldUsers.add(usr.getUser().getUsername().toLowerCase());
+                        oldUsers2.add(usr.getUser().getUsername().toLowerCase());
+                    }
+                    oldGroup = groups;
                 }
-                oldGroup = groups;
-            }
-        }
-
-        if (oldGroup != null) {
-
-            JSONObject resource = object.getJSONObject("resource");
-
-            String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
-
-            if ((api.getGroupById(shortId) != null) && (!api.getGroupById(shortId).getTopic().equals(topic)))
-                topic = api.getGroupById(shortId).getTopic();
-
-            String picture = resource.getJSONObject("properties").isNull("picture") ? "" : resource.getJSONObject("properties").getString("picture");
-
-            if ((api.getGroupById(shortId) != null) && (!api.getGroupById(shortId).getPictureUrl().equals(picture)))
-                picture = api.getGroupById(shortId).getPictureUrl();
-
-            GroupImpl group = new GroupImpl(api, "19:" + object.getString("resourceLink").split("19:")[1].split("@")[0] + "@thread.skype");
-
-            group.setPictureUrl(picture);
-            group.setTopic(topic);
-
-
-            for (int ii = 0; ii < object.getJSONObject("resource").getJSONArray("members").length(); ii++) {
-                JSONObject user = object.getJSONObject("resource").getJSONArray("members").getJSONObject(ii);
-
-                newUsers.add(user.getString("id").split("8:")[1]); //add username
-
-                try {
-
-                    GroupUser.Role role = GroupUser.Role.USER;
-
-                    User ussr = api.getSimpleUser(user.getString("id").split("8:")[1]); //get user without searching skypes BD
-
-                    if (!user.getString("role").equals("User"))
-                        role = GroupUser.Role.MASTER;
-
-                    if(oldUsers.contains(ussr.getUsername()))
-                        for (GroupUser users : oldGroup.getClients())
-                            if (users.getUser().getUsername().equals(ussr.getUsername()))
-                                if (role != users.role)
-                                    api.getEventManager().executeEvent(new UserRoleChangedEvent(oldGroup, users.getUser(), role));
-
-                    GroupUser gu = new GroupUser(ussr, role, group);
-                    group.getClients().add(gu);
-
-                } catch (Exception ignored) {}
             }
 
+            if (oldGroup != null) {
 
-            oldUsers.removeAll(newUsers);
-            newUsers.removeAll(oldUsers2);
+                JSONObject resource = object.getJSONObject("resource");
+
+                String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
+
+                if ((api.getGroupById(shortId) != null))
+                    topic = api.getGroupById(shortId).getTopic();
+
+                String picture = resource.getJSONObject("properties").isNull("picture") ? "" : resource.getJSONObject("properties").getString("picture");
+
+                if ((api.getGroupById(shortId) != null) && (!api.getGroupById(shortId).getPictureUrl().equals(picture)))
+                    picture = api.getGroupById(shortId).getPictureUrl();
+
+                GroupImpl group = new GroupImpl(api, "19:" + object.getString("resourceLink").split("19:")[1].split("@")[0] + "@thread.skype");
+
+                group.setPictureUrl(picture);
+                group.setTopic(topic);
 
 
-            for (String old : oldUsers)
-                api.getEventManager().executeEvent(new UserLeaveEvent(group, new GetProfilePacket(api).getUser(old)));
+                for (int ii = 0; ii < object.getJSONObject("resource").getJSONArray("members").length(); ii++) {
+                    JSONObject user = object.getJSONObject("resource").getJSONArray("members").getJSONObject(ii);
 
-            for (String news : newUsers)
-                api.getEventManager().executeEvent(new UserJoinEvent(group, new GetProfilePacket(api).getUser(news)));
+                    newUsers.add(user.getString("id").split("8:")[1]); //add username
 
-            api.updateGroup(group);
+                    try {
+
+                        GroupUser.Role role = GroupUser.Role.USER;
+
+                        User ussr = api.getSimpleUser(user.getString("id").split("8:")[1]); //get user without searching skypes BD
+
+                        if (!user.getString("role").equals("User"))
+                            role = GroupUser.Role.MASTER;
+
+                        if (oldUsers.contains(ussr.getUsername()))
+                            for (GroupUser users : oldGroup.getClients())
+                                if (users.getUser().getUsername().equals(ussr.getUsername()))
+                                    if (role != users.role)
+                                        api.getEventManager().executeEvent(new UserRoleChangedEvent(oldGroup, users.getUser(), role));
+
+                        GroupUser gu = new GroupUser(ussr, role, group);
+                        group.getClients().add(gu);
+
+                    } catch (Exception ignored) {
+                    }
+                }
+
+
+                oldUsers.removeAll(newUsers);
+                newUsers.removeAll(oldUsers2);
+
+
+                    for (String old : oldUsers)
+                    api.getEventManager().executeEvent(new UserLeaveEvent(group, new GetProfilePacket(api).getUser(old)));
+
+                for (String news : newUsers)
+                    api.getEventManager().executeEvent(new UserJoinEvent(group, new GetProfilePacket(api).getUser(news)));
+
+                api.updateGroup(group);
+            }
+        }catch(Exception e){
+            api.log("#################################################");
+            if (api.isAllowLogging())
+                e.printStackTrace();
+            api.log("#################################################");
+            api.log("Failed to update group info. Have we just loaded?");
+            try{
+                api.log("Resource Link: " + object.getString("resourceLink"));
+                api.log("Group ID: " + object.getString("resourceLink").split("19:")[1].split("@")[0] + "@thread.skype");
+            }catch(Exception ea){}
         }
-
     }
 
     //OLD METHODS

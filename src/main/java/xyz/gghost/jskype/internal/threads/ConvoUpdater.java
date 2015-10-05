@@ -1,6 +1,7 @@
 package xyz.gghost.jskype.internal.threads;
 
 import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.events.APILoadedEvent;
 import xyz.gghost.jskype.exception.AccountUnusableForRecentException;
 import xyz.gghost.jskype.internal.packet.packets.GetConvos;
 
@@ -20,6 +21,7 @@ public class ConvoUpdater extends Thread{
                 if (!groupFail) {
                     new GetConvos(api).setupRecent();
                     api.setLoaded(true);
+                    api.getEventManager().executeEvent(new APILoadedEvent());
                 }
             } catch (AccountUnusableForRecentException e) {
                 if (first)

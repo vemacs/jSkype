@@ -70,7 +70,7 @@ public class GetProfilePacket {
                 me.setPhoneNumber(json.getString("phoneMobile"));
 
             if (!json.isNull("city"))
-                me.setLocation(json.getString("phoneMobile"));
+                me.setLocation(json.getString("city"));
             if (!json.isNull("country"))
                 me.setLocation(me.getLocation() + ", " + json.getString("country"));
             if (me.getLocation().startsWith(", "))

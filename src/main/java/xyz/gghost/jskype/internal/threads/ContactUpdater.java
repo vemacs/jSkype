@@ -1,8 +1,6 @@
 package xyz.gghost.jskype.internal.threads;
 
-import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
 import xyz.gghost.jskype.internal.packet.packets.GetContactsPacket;
 
 public class ContactUpdater extends Thread {
@@ -22,6 +20,5 @@ public class ContactUpdater extends Thread {
                 e.printStackTrace();
             }
         }
-        Group group = null;
     }
 }
