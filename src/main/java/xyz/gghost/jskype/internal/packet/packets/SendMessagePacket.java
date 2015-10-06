@@ -24,7 +24,7 @@ public class SendMessagePacket {
         if (edit == null || msg == null)
             return msg;
 
-        packet.setData(new JSONObject().put("content", msg.getMessage().replace("\"", "\\\""))
+        packet.setData(new JSONObject().put("content", msg.getMessage())
                 .put("messagetype", "RichText")
                 .put("contenttype", "text")
                 .put("skypeeditedid", msg.getId())
@@ -67,7 +67,7 @@ public class SendMessagePacket {
         PacketBuilder packet = new PacketBuilder(api);
         packet.setType(RequestType.POST);
 
-        packet.setData(new JSONObject().put("content", msg.getMessage().replace("\"", "\\\""))
+        packet.setData(new JSONObject().put("content", msg.getMessage())
                 .put("messagetype", "RichText")
                 .put("contenttype", "text")
                 .put("clientmessageid", id)
