@@ -108,6 +108,7 @@ public class Test {
     static boolean isRunning = true;
     public static void main(String[] args) {
         SkypeAPI skype = new SkypeAPI("NotGhostBot", "{password here}"); //login
+        skype.login();
         System.out.println("Loaded Skype..."); //Tell the user that skype has fully initialized - getting contacts, recent, etc can take a few seconds
 
         skype.getEventManager().registerListener(new ExampleListener(skype)); //Register listener
