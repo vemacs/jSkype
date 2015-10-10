@@ -1,6 +1,5 @@
-package xyz.gghost.jskype.internal.threads.poller;
+package xyz.gghost.jskype.internal.poller;
 
-import lombok.Getter;
 import org.json.JSONObject;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;

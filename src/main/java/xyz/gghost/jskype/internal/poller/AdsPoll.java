@@ -1,4 +1,4 @@
-package xyz.gghost.jskype.internal.threads.poller;
+package xyz.gghost.jskype.internal.poller;
 
 import org.json.JSONObject;
 import xyz.gghost.jskype.Group;

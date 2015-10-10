@@ -1,7 +1,7 @@
 package xyz.gghost.jskype.internal.threads;
 
 import xyz.gghost.jskype.internal.utils.NamingUtils;
-import xyz.gghost.jskype.internal.threads.poller.*;
+import xyz.gghost.jskype.internal.poller.*;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.ContactGroupImpl;

@@ -100,7 +100,7 @@ public class Auth {
 
                 UserRecaptchaEvent event = new UserRecaptchaEvent(imageUrl2, account.getUsername());
                 account.getEventManager().executeEvent(event);
-                
+
                 String token = imgUrl.split("hid=")[1].split("&fid")[0];
                 String fid = url.split("&fid=")[1].split("&")[0];
 
