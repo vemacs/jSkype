@@ -8,9 +8,6 @@ import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.message.MessageHistory;
-import xyz.gghost.jskype.internal.packet.packets.PingPrepPacket;
-import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
-import xyz.gghost.jskype.internal.packet.packets.UserManagementPacket;
 import xyz.gghost.jskype.user.GroupUser;
 
 import java.io.File;
@@ -35,25 +32,25 @@ public class GroupImpl implements Group {
     }
 
     public MessageHistory getMessageHistory(){
-        if(api.getA().containsKey(id))
-            return api.getA().get(id);
+        if(api.getSkypeInternals().getA().containsKey(id))
+            return api.getSkypeInternals().getA().get(id);
         MessageHistory history = new MessageHistory(id, api);
-        api.getA().put(id, history);
+        api.getSkypeInternals().getA().put(id, history);
         return history;
     }
 
     public void kick(String usr) {
-        new UserManagementPacket(api).kickUser(getLongId(), usr);
+        api.getSkypeInternals().getRequests().getUserRankingRequest().kickUser(getLongId(), usr);
     }
 
     public void add(String usr) {
-        new UserManagementPacket(api).addUser(getLongId(), usr);
+        api.getSkypeInternals().getRequests().getUserRankingRequest().addUser(getLongId(), usr);
     }
 
     public void setAdmin(String usr, boolean admin)
     {
         if (admin) {
-            new UserManagementPacket(api).promoteUser(getLongId(), usr);
+            api.getSkypeInternals().getRequests().getUserRankingRequest().promoteUser(getLongId(), usr);
         }else
             add(usr);
     }
@@ -75,17 +72,17 @@ public class GroupImpl implements Group {
     }
 
     public Message sendMessage(Message msg) {
-        return new SendMessagePacket(api).sendMessage(id, msg);
+        return  api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, msg);
     }
     public Message sendMessage(String msg) {
-        return new SendMessagePacket(api).sendMessage(id, new Message(msg));
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, new Message(msg));
     }
     public Message sendImage(File url) {
-        return new SendMessagePacket(api).sendPing(id, new Message(""), new PingPrepPacket(api).urlToId(url, id));
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().sendPing(id, new Message(""), api.getSkypeInternals().getRequests().getPingPrepRequest().urlToId(url, id));
     }
 
     public Message sendImage(URL url) {
-        return new SendMessagePacket(api).sendPing(id, new Message(""), new PingPrepPacket(api).urlToId(url.toString(), id));
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().sendPing(id, new Message(""), api.getSkypeInternals().getRequests().getPingPrepRequest().urlToId(url.toString(), id));
     }
     public List<GroupUser> getClients() {
         return clients;

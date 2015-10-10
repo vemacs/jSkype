@@ -14,7 +14,7 @@ public class ContactUpdater extends Thread {
     public void run() {
         while (this.isAlive()) {
             try {
-                new GetContactsPacket(api).setupContact();
+                api.getSkypeInternals().getRequests().getStartupRequests().setupContactsRealTime();
                 Thread.sleep(7000);
             } catch (InterruptedException ignored) {} catch (Exception e) {
                 e.printStackTrace();

@@ -3,7 +3,6 @@ package xyz.gghost.jskype.internal.impl;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.message.Message;
-import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
 import xyz.gghost.jskype.user.GroupUser;
 
 import java.util.ArrayList;
@@ -46,10 +45,10 @@ public class ContactGroupImpl extends GroupImpl implements Group {
         return id;
     }
     public Message sendMessage(Message msg) {
-        return new SendMessagePacket(api).sendMessage(id, msg);
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, msg);
     }
     public Message sendMessage(String msg) {
-        return new SendMessagePacket(api).sendMessage(id, new Message(msg));
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, new Message(msg));
     }
     public String getTopic() {
         return getUsername();

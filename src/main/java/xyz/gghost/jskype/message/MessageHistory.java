@@ -51,7 +51,7 @@ public class MessageHistory {
         JSONArray jsonArray = json.getJSONArray("messages");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonMessage = jsonArray.getJSONObject(i);
-            if(jsonMessage.getString("type").equals("Message")) {
+            if(jsonMessage.getString("type").equals("MessagePoll")) {
                 Message message = new Message(FormatUtils.decodeText(jsonMessage.getString("content")));
                 User user;
 

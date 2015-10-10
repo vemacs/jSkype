@@ -5,22 +5,17 @@ import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import xyz.gghost.jskype.event.EventManager;
-import xyz.gghost.jskype.internal.auth.Auth;
 import xyz.gghost.jskype.exception.BadResponseException;
 import xyz.gghost.jskype.exception.NoPendingContactsException;
 //import xyz.gghost.jskype.internal.calling.CallingMaster;
-import xyz.gghost.jskype.internal.impl.GroupImpl;
+import xyz.gghost.jskype.internal.impl.SkypeInternals;
 import xyz.gghost.jskype.internal.impl.UserImpl;
-import xyz.gghost.jskype.internal.packet.packets.GroupInfoPacket;
-import xyz.gghost.jskype.internal.packet.packets.UserManagementPacket;
-import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.internal.packet.packets.GetPendingContactsPacket;
 import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
 import xyz.gghost.jskype.internal.auth.LoginTokens;
-import xyz.gghost.jskype.internal.threads.*;
 import xyz.gghost.jskype.user.LocalAccount;
 import xyz.gghost.jskype.user.OnlineStatus;
 import xyz.gghost.jskype.user.User;
@@ -30,7 +25,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,21 +34,15 @@ public class SkypeAPI {
     @Getter private List<User> contacts = new ArrayList<User>();
     @Getter private LoginTokens loginTokens = new LoginTokens();
     @Getter private EventManager eventManager = new EventManager();
-    @Getter private HashMap<String, MessageHistory> a = new HashMap<String, MessageHistory>();  //Could use an interface to hide this but its not worth it
     @Setter @Getter private boolean allowLogging = true;
     @Getter private String username;
     @Getter UUID uuid = UUID.randomUUID();
     @Getter private String password;
     @Getter @Setter private boolean loaded;
-    private OnlineStatus s = OnlineStatus.ONLINE;
-    private Poller poller;
-    private Thread contactUpdater;
-    private Thread pinger;
-    private ConvoUpdater convoUpdater;
-    private PendingContactEventThread pendingContactThread;
+    @Getter private SkypeInternals skypeInternals = new SkypeInternals(this);
     @Getter @Setter private boolean debugMode = false;
-    @Getter @Setter private boolean reloggin = false;
 
+    private OnlineStatus s = OnlineStatus.ONLINE;
 
     public SkypeAPI(String username, String password) {
         this.username = username;
@@ -67,10 +55,7 @@ public class SkypeAPI {
      * @throws Exception Failed to login/badusernamepassword exception
      */
     public SkypeAPI login() throws Exception {
-        new Auth().login(this);
-        reloggin = true;
-        init();
-        updateStatus(OnlineStatus.ONLINE);
+        skypeInternals.login();
         return this;
     }
 
@@ -82,33 +67,13 @@ public class SkypeAPI {
             System.out.println(msg);
     }
 
-    /**
-     * Start threads
-     */
-    private void init() {
-        pinger = new Ping(this);
-        pinger.start();
-        contactUpdater = new ContactUpdater(this);
-        contactUpdater.start();
-        pendingContactThread = new PendingContactEventThread(this);
-        pendingContactThread.start();
-        poller = new Poller(this);
-        poller.start();
-        convoUpdater = new ConvoUpdater(this);
-        convoUpdater.start();
-    }
 
     /**
      * Attempt to stop all skype threads
      * @return
      */
     public void stop() {
-        poller.stopThreads();
-        pinger.stop();
-        contactUpdater.stop();
-        poller.stop();
-        convoUpdater.stop();
-        pendingContactThread.stop();
+        skypeInternals.stop();
     }
 
     /**
@@ -138,7 +103,7 @@ public class SkypeAPI {
      */
     public User getUserByUsername(String username) {
         User user = getContact(username);
-        return user != null ? user : new GetProfilePacket(this).getUser(username);
+        return user != null ? user : skypeInternals.getRequests().getUserMetaRequest().getUser(username);
     }
     /**
      * Get contact by username
@@ -232,13 +197,13 @@ public class SkypeAPI {
             usernames.add(contact.getJSONObject("ContactCards").getJSONObject("Skype").getString("SkypeName"));
         }
 
-        return new GetProfilePacket(this).getUsers(usernames);
+        return getSkypeInternals().getRequests().getUserMetaRequest().getUsers(usernames);
     }
     /**
      * Get user info about the account
      */
     public LocalAccount getAccountInfo(){
-        return new GetProfilePacket(this).getMe();
+       return getSkypeInternals().getRequests().getUserMetaRequest().getMe();
     }
     /**
      * Change profile picture
@@ -293,9 +258,9 @@ public class SkypeAPI {
         PacketBuilder pb = new PacketBuilder(this);
         pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + idLong + "/properties?name=topic");
         pb.setType(RequestType.PUT);
-        pb.setData("{\"topic\":\"New Group!\"}");
+        pb.setData(new JSONObject().put("topic", "New Group").toString());
         pb.makeRequest();
-        return new GroupInfoPacket(this).getGroup(idLong);
+        return skypeInternals.getRequests().getGroupMetaRequest().getGroup(idLong);
     }
 
     /**
@@ -323,9 +288,9 @@ public class SkypeAPI {
         PacketBuilder pb = new PacketBuilder(this);
         pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + idLong + "/properties?name=topic");
         pb.setType(RequestType.PUT);
-        pb.setData("{\"topic\":\"New Group!\"}");
+        pb.setData(new JSONObject().put("topic", "New Group").toString());
         pb.makeRequest();
-        return new GroupInfoPacket(this).getGroup(idLong);
+        return skypeInternals.getRequests().getGroupMetaRequest().getGroup(idLong);
     }
 
     /**
@@ -360,10 +325,9 @@ public class SkypeAPI {
      * Join a joinable group from it's long id
      * @param longId
      */
-    public void reJoinGroup(String longId){
-        new UserManagementPacket(this).addUser(longId, getUsername());
+    public void reJoinGroup(String longId) {
+        skypeInternals.getRequests().getUserRankingRequest().addUser(longId, getUsername());
     }
-
     /**
      * Get contact requests
      * @return

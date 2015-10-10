@@ -1,15 +1,16 @@
-package xyz.gghost.jskype.internal.packet.packets;
+package xyz.gghost.jskype.internal.packet.requests;
 
 import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 
-public class UserManagementPacket {
-
+/**
+ * Created by Ghost on 10/10/2015.
+ */
+public class UserRankingRequest {
     private SkypeAPI api;
-
-    public UserManagementPacket(SkypeAPI api) {
+    public UserRankingRequest(SkypeAPI api){
         this.api = api;
     }
 

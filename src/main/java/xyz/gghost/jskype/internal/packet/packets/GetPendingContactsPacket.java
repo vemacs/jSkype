@@ -37,7 +37,7 @@ public class GetPendingContactsPacket {
             JSONArray json = new JSONArray(a);
             for (int i = 0; i < json.length(); i++) {
                 JSONObject object = json.getJSONObject(i);
-                pending.add(new GetProfilePacket(api).getUser(object.getString("sender")));
+                pending.add(api.getSkypeInternals().getRequests().getUserMetaRequest().getUser(object.getString("sender")));
             }
             return pending;
         }

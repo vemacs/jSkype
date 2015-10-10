@@ -19,9 +19,10 @@ public class ConvoUpdater extends Thread{
         while (this.isAlive()) {
             try {
                 if (!groupFail) {
-                    new GetConvos(api).setupRecent();
+                    api.getSkypeInternals().getRequests().getStartupRequests().setupRecent();
+                    if (!api.isLoaded())
+                        api.getEventManager().executeEvent(new APILoadedEvent());
                     api.setLoaded(true);
-                    api.getEventManager().executeEvent(new APILoadedEvent());
                 }
             } catch (AccountUnusableForRecentException e) {
                 if (first)

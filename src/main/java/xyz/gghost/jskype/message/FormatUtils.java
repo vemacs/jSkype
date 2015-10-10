@@ -15,7 +15,7 @@ public final class FormatUtils {
      * @return Formatted text
      */
     public static String bold(String text) {
-        return "<b raw_pre=\"*\" raw_post=\"*\">" + text + "</b>";
+        return "<b>" + text + "</b>";
     }
 
     /**
@@ -25,7 +25,7 @@ public final class FormatUtils {
      * @return Formatted text
      */
     public static String italic(String text) {
-        return "<i raw_pre=\"_\" raw_post=\"_\">" + text + "</i>";
+        return "<i>" + text + "</i>";
     }
 
     /**
@@ -35,7 +35,7 @@ public final class FormatUtils {
      * @return Formatted text
      */
     public static String strikethrough(String text) {
-        return "<s raw_pre=\"~\" raw_post=\"~\">" + text + "</s>";
+        return "<s>" + text + "</s>";
     }
 
     /**

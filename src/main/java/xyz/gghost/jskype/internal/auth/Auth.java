@@ -5,10 +5,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.events.UserRecaptchaEvent;
 import xyz.gghost.jskype.exception.*;
 import xyz.gghost.jskype.internal.packet.Header;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
+
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,7 +20,7 @@ public class Auth {
     private String url = "";
     private PacketBuilder packet;
 
-    private Document postData(String username, String password, SkypeAPI api) throws BadResponseException {
+    private Document postData(String username, String password, SkypeAPI api, String id, String answer, String token) throws BadResponseException {
         Date now = new Date();
 
         PacketBuilder getIdsPacket = new PacketBuilder(api);
@@ -42,6 +44,14 @@ public class Auth {
         data.append("&client_id=").append(URLEncoder.encode("578134"));
         data.append("&redirect_uri=").append(URLEncoder.encode("https://web.skype.com"));
 
+        if (id != null) {
+            data.append("&hip_solution=").append(URLEncoder.encode(answer));
+            data.append("&hip_token=").append(URLEncoder.encode(token));
+            data.append("&hip_type=").append(URLEncoder.encode("visual"));
+            data.append("&fid=").append(URLEncoder.encode("fid"));
+            data.append("&captcha_provider=").append(URLEncoder.encode("Hip"));
+        }
+
         String formData = data.toString();
 
         PacketBuilder login = new PacketBuilder(api);
@@ -60,7 +70,7 @@ public class Auth {
     }
 
     public void login(SkypeAPI api) throws Exception {
-        Document loginResponse = postData(api.getUsername(), api.getPassword(), api);
+        Document loginResponse = postData(api.getUsername(), api.getPassword(), api, null, null, null);
         handle(loginResponse, api);
         try {
             prepare(api);
@@ -70,14 +80,45 @@ public class Auth {
     }
 
 
-    public void handle(Document loginResponseDocument, SkypeAPI account) throws FailedToLoginException, RecaptchaException {
+    public void handle(Document loginResponseDocument, SkypeAPI account) throws Exception {
         try {
             Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
             if (inputs.size() > 0) {
                 account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
             } else if (loginResponseDocument.html().contains("var skypeHipUrl = \"https://clien")) {
                 account.log("Failed to connect due to a recaptcha!");
-                throw new RecaptchaException();
+/*
+                String url = loginResponseDocument.html().split("var skypeHipUrl = \"")[1].split("\";")[0];
+
+                PacketBuilder pb = new PacketBuilder(account);
+                pb.setSendLoginHeaders(false);
+                System.out.println(url);
+                pb.setUrl(url);
+                pb.setType(RequestType.GET);
+
+                String imgUrl = pb.makeRequest();  //< 200 / no data
+                String imageUrl2 = imgUrl.split("imageurl:'")[1]
+                        .split("',")[0];
+
+                UserRecaptchaEvent event = new UserRecaptchaEvent(imageUrl2, account.getUsername());
+                account.getEventManager().executeEvent(event);
+
+                String token = imgUrl.split("hid=")[1].split("&fid")[0];
+                String fid = url.split("&fid=")[1].split("&")[0];
+                System.out.println("fid" + fid);
+                System.out.println("token" + token);
+                System.out.println("answer" + event.getAnswer());
+                System.out.println("pic" + imageUrl2);
+                try {
+                    Document loginResponse = postData(account.getUsername(), account.getPassword(), account, fid, event.getAnswer(), token);
+                    handle(loginResponse, account);
+                    prepare(account);
+                }catch(Exception e){
+                    throw e;
+                }
+*/
+                throw new FailedToLoginException("CAPTCHA!");
+                //return;
             } else {
                 Elements elements = loginResponseDocument.select(".message_error");
                 if (elements.size() > 0) {
@@ -92,12 +133,9 @@ public class Auth {
             }
         }catch (FailedToLoginException  e){
             throw e;
-        }catch (RecaptchaException e){
-            if (!account.isReloggin())
-                throw e;
-            account.stop();
         }
     }
+
 
 
     public void prepare(SkypeAPI api) throws BadUsernamePasswordException, FailedToLoginException{

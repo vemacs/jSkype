@@ -1,21 +1,23 @@
-package xyz.gghost.jskype.internal.packet.packets;
+package xyz.gghost.jskype.internal.packet.requests;
 
+import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.Header;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
 import xyz.gghost.jskype.internal.packet.RequestType;
-import org.json.JSONObject;
-
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 
-public class PingPrepPacket {
+/**
+ * Created by Ghost on 10/10/2015.
+ */
+public class PingPrepRequest {
     private SkypeAPI api;
-    public PingPrepPacket(SkypeAPI api){
+    public PingPrepRequest(SkypeAPI api){
         this.api = api;
     }
 

@@ -2,7 +2,6 @@ package xyz.gghost.jskype.message;
 
 import lombok.Data;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.packet.packets.SendMessagePacket;
 import xyz.gghost.jskype.user.User;
 
 @Data
@@ -30,7 +29,7 @@ public class Message {
     public Message editMessage(SkypeAPI api, String edit) {
         setMessage(edit);
         edited = true;
-        return new SendMessagePacket(api).editMessage(this, message);
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().editMessage(this, message);
     }
 
     /**
@@ -41,7 +40,7 @@ public class Message {
      */
     public Message updateEdit(SkypeAPI api) {
         edited = true;
-        return new SendMessagePacket(api).editMessage(this, message);
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().editMessage(this, message);
     }
 
 }

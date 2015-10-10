@@ -1,27 +1,29 @@
-package xyz.gghost.jskype.internal.packet.packets;
+package xyz.gghost.jskype.internal.packet.requests;
 
-import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
-import xyz.gghost.jskype.message.FormatUtils;
+import org.json.JSONObject;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
+import xyz.gghost.jskype.internal.utils.NamingUtils;
+import xyz.gghost.jskype.message.FormatUtils;
 import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupInfoPacket {
+/**
+ * Created by Ghost on 10/10/2015.
+ */
+public class GroupMetaRequest {
     private SkypeAPI api;
-
-    public GroupInfoPacket(SkypeAPI api){
+    public GroupMetaRequest(SkypeAPI api){
         this.api = api;
     }
-
     public Group getGroup(String longId){
         List<GroupUser> groupMembers = new ArrayList<GroupUser>();
 
@@ -36,7 +38,6 @@ public class GroupInfoPacket {
 
         GroupImpl group = new GroupImpl(api, new JSONObject(data).getString("id"));
 
-
         JSONObject properties = new JSONObject(data).getJSONObject("properties");
         if (!properties.isNull("topic"))
             group.setTopic(properties.getString("topic"));
@@ -49,15 +50,20 @@ public class GroupInfoPacket {
         JSONArray membersArray = new JSONObject(data).getJSONArray("members");
         for (int ii = 0; ii < membersArray.length(); ii++) {
             JSONObject member = membersArray.getJSONObject(ii);
+            String id = member.getString("id");
+
             try {
                 GroupUser.Role role = GroupUser.Role.USER;
 
-                User ussr = api.getSimpleUser(member.getString("id").split("8:")[1]);
+                if (!id.contains("8:"))
+                    continue;
+
+                User usr = api.getSimpleUser(NamingUtils.getUsername(id));
 
                 if (!member.getString("role").equals("User"))
                     role = GroupUser.Role.MASTER;
 
-                group.getClients().add(new GroupUser(ussr, role, group));
+                group.getClients().add(new GroupUser(usr, role, group));
             } catch (Exception e){
                 api.log("Failed to get a members info");
                 if (api.isDebugMode())
@@ -81,13 +87,19 @@ public class GroupInfoPacket {
                 return null;
 
             JSONArray membersArray = new JSONObject(data).getJSONArray("members");
+
             for (int ii = 0; ii < membersArray.length(); ii++) {
                 JSONObject member = membersArray.getJSONObject(ii);
+                String ia = member.getString("id");
                 try {
 
                     GroupUser.Role role = GroupUser.Role.USER;
 
-                    User usr = api.getSimpleUser(member.getString("id").split("8:")[1]);
+                    if (!ia.contains("8:"))
+                        continue;
+
+                    User usr = api.getSimpleUser(NamingUtils.getUsername(ia));
+
                     if (!member.getString("role").equals("User"))
                         role = GroupUser.Role.MASTER;
 

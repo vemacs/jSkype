@@ -1,17 +1,17 @@
-package xyz.gghost.jskype.internal.packet.packets;
-
+package xyz.gghost.jskype.internal.packet.requests;
 
 import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
+import xyz.gghost.jskype.message.Message;
 
-public class SendMessagePacket {
-
+/**
+ * Created by Ghost on 10/10/2015.
+ */
+public class SendMessage {
     private SkypeAPI api;
-
-    public SendMessagePacket(SkypeAPI api) {
+    public SendMessage(SkypeAPI api){
         this.api = api;
     }
 
@@ -46,7 +46,7 @@ public class SendMessagePacket {
 
         PacketBuilder packet = new PacketBuilder(api);
         packet.setType(RequestType.POST);
-        String data = "{content: \"<URIObject type=\\\"Picture.1\\\" uri=\\\"https://api.asm.skype.com/v1/objects/" + ids + "\\\" url_thumbnail=\\\"https://api.asm.skype.com/v1/objects/"+ ids + "/views/imgt1\\\">To view this shared photo, go to: <a href=\\\"https://api.asm.skype.com/s/i?" + ids + "\\\">https://api.asm.skype.com/s/i?" + ids + "<\\/a><OriginalName v=\\\"^005CFF2010F86CC63570CA528D9B2CCFE3BF3B54DF8A01E92E^pimgpsh_thumbnail_win_distr.jpg\\\"/><meta type=\\\"photo\\\" originalName=\\\"^005CFF2010F86CC63570CA528D9B2CCFE3BF3B54DF8A01E92E^pimgpsh_thumbnail_win_distr.jpg\\\"/><\\/URIObject>\", messagetype: \"RichText/UriObject\", contenttype: \"text\", clientmessageid: \"" + id + "\"}";
+        String data = "{content: \"<URIObject type=\\\"PicturePoll.1\\\" uri=\\\"https://api.asm.skype.com/v1/objects/" + ids + "\\\" url_thumbnail=\\\"https://api.asm.skype.com/v1/objects/"+ ids + "/views/imgt1\\\">To view this shared photo, go to: <a href=\\\"https://api.asm.skype.com/s/i?" + ids + "\\\">https://api.asm.skype.com/s/i?" + ids + "<\\/a><OriginalName v=\\\"^005CFF2010F86CC63570CA528D9B2CCFE3BF3B54DF8A01E92E^pimgpsh_thumbnail_win_distr.jpg\\\"/><meta type=\\\"photo\\\" originalName=\\\"^005CFF2010F86CC63570CA528D9B2CCFE3BF3B54DF8A01E92E^pimgpsh_thumbnail_win_distr.jpg\\\"/><\\/URIObject>\", messagetype: \"RichText/UriObject\", contenttype: \"text\", clientmessageid: \"" + id + "\"}";
         packet.setData(data);
         packet.setUrl(url);
         packet.makeRequest();
@@ -66,7 +66,6 @@ public class SendMessagePacket {
 
         PacketBuilder packet = new PacketBuilder(api);
         packet.setType(RequestType.POST);
-
         packet.setData(new JSONObject().put("content", msg.getMessage())
                 .put("messagetype", "RichText")
                 .put("contenttype", "text")
@@ -75,8 +74,6 @@ public class SendMessagePacket {
 
         packet.setUrl(url);
         packet.makeRequest();
-
         return msg;
     }
-
 }
