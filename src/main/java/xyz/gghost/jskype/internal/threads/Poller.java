@@ -41,7 +41,6 @@ public class Poller extends Thread {
         }});
 
         while (this.isAlive() || breakLoop) {
-
             Thread processingThread = new Thread() {
                 public void run() {
                     poll();
@@ -58,7 +57,6 @@ public class Poller extends Thread {
 
     public void stopThreads(){
         breakLoop = true;
-
         for (Thread thread : threads)
             thread.interrupt();
     }
@@ -74,7 +72,6 @@ public class Poller extends Thread {
         if (data == null || data.equals("") || data.equals("{}"))
             return;
 
-        
         JSONArray json = new JSONObject(data).getJSONArray("eventMessages");
         for (int i = 0; i < json.length(); i++) {
             JSONObject object = json.getJSONObject(i);
@@ -111,7 +108,6 @@ public class Poller extends Thread {
             }
         }
     }
-
 
 
     public static User getUser(String username, Group chat, SkypeAPI api) {
