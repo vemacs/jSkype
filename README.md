@@ -27,6 +27,7 @@
 - UserChatEvent
 - UserImagePingEvent
 - UserOtherFilesPingEvent
+- UserRecaptchaEvent (recoded versions only!)
 - UserJoinEvent
 - UserLeaveEvent
 - UserPendingContactRequestEvent
