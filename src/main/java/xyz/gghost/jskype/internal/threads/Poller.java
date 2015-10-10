@@ -74,9 +74,8 @@ public class Poller extends Thread {
         if (data == null || data.equals("") || data.equals("{}"))
             return;
 
-
-        JSONObject messagesAsJson = new JSONObject(data);
-        JSONArray json = messagesAsJson.getJSONArray("eventMessages");
+        
+        JSONArray json = new JSONObject(data).getJSONArray("eventMessages");
         for (int i = 0; i < json.length(); i++) {
             JSONObject object = json.getJSONObject(i);
 
