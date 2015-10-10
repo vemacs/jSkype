@@ -1,5 +1,5 @@
 # jSkype
-jSkype creation started when skype4web was released, however at the time I was making a private Skype client in Java, not an API. Samczsun, better known as super salter 9000 was creating an extremely limited api at the time of my client creation and still is today. In order to spare people from his limited api, I'm releasing jSkype. 
+
 
 #Features (confirmed)
 - Ping chats with images
