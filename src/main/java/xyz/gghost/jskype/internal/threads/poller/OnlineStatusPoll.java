@@ -39,6 +39,7 @@ public class OnlineStatusPoll implements PollRequest {
 
     }
     public boolean isMe(JSONObject object){
+
         return ((!object.isNull("resourceType")) && object.getString("resourceType").equals("UserPresence"));
     }
 

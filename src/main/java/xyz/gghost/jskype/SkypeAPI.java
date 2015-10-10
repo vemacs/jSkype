@@ -14,7 +14,6 @@ import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.internal.packet.packets.GetPendingContactsPacket;
-import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
 import xyz.gghost.jskype.internal.auth.LoginTokens;
 import xyz.gghost.jskype.user.LocalAccount;
 import xyz.gghost.jskype.user.OnlineStatus;

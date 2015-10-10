@@ -1,5 +1,6 @@
 package xyz.gghost.jskype.internal.packet;
 
+import sun.security.validator.ValidatorException;
 import xyz.gghost.jskype.SkypeAPI;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,7 +51,7 @@ public class PacketBuilder {
                 con.setRequestProperty("Cookie", cookies);
             con.setDoOutput(true);
             if (sendLoginHeaders)
-                    addLogin(api);
+                addLogin(api);
             for (Header s : headers)
                 con.addRequestProperty(s.getType(), s.getData());
 
@@ -99,8 +100,11 @@ public class PacketBuilder {
                     api.log(header.getType() + ": " + header.getData());
                 return null;
             }
+
         } catch (Exception e) {
 
+            if (e.getMessage().contains("sun.security.validator.ValidatorException"))
+                return null; //Java or microsoft just had a brain fart
             api.log("================================================");
             api.log("========Unable to request  the skype api========");
             api.log("================================================");

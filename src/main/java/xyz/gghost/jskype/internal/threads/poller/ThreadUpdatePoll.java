@@ -8,7 +8,6 @@ import xyz.gghost.jskype.events.UserLeaveEvent;
 import xyz.gghost.jskype.events.UserRoleChangedEvent;
 import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
-import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
 import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 

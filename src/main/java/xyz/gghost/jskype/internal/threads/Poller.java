@@ -7,7 +7,6 @@ import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
-import xyz.gghost.jskype.internal.packet.packets.GetProfilePacket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import xyz.gghost.jskype.user.GroupUser;
@@ -23,7 +22,7 @@ public class Poller extends Thread {
     private List<Thread> threads = new ArrayList<Thread>();
     private boolean breakLoop = false;
     public List<PollRequest> processors = new ArrayList<PollRequest>();
-
+    public ArrayList<Integer> pastIds = new ArrayList<Integer>();
     public Poller(SkypeAPI api) {
         this.api = api;
     }
@@ -84,6 +83,9 @@ public class Poller extends Thread {
                 if  (resource.isNull("resourceLink"))
                     resource.put("resourceLink", resourceLink);
 
+                if (api.isDebugMode())
+                    System.out.println(object);
+
                 Group chat = null;
 
                 if (resourceLink.contains("conversations/19:") || resourceLink.contains("8:")) {
@@ -93,6 +95,13 @@ public class Poller extends Thread {
                     } else if (!resourceLink.contains("@")) {
                         chat = new ContactGroupImpl(api, "8:" + NamingUtils.getUsername(resourceLink));
                     }
+                }
+
+
+                if ((!object.isNull("id")) && (pastIds.contains(object.getInt("id")))) {
+                    if(api.isDebugMode())
+                        api.log("Warning! Skype might be behind us!");
+                    continue;
                 }
 
                 for (PollRequest pollProcessor : processors) {
@@ -105,6 +114,9 @@ public class Poller extends Thread {
                         e.printStackTrace();
                     }
                 }
+
+                if (!object.isNull("id"))
+                    pastIds.add(object.getInt("id"));
             }
         }
     }

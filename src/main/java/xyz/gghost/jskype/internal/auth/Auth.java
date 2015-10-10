@@ -48,7 +48,7 @@ public class Auth {
             data.append("&hip_solution=").append(URLEncoder.encode(answer));
             data.append("&hip_token=").append(URLEncoder.encode(token));
             data.append("&hip_type=").append(URLEncoder.encode("visual"));
-            data.append("&fid=").append(URLEncoder.encode("fid"));
+            data.append("&fid=").append(URLEncoder.encode(id));
             data.append("&captcha_provider=").append(URLEncoder.encode("Hip"));
         }
 
@@ -87,28 +87,23 @@ public class Auth {
                 account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
             } else if (loginResponseDocument.html().contains("var skypeHipUrl = \"https://clien")) {
                 account.log("Failed to connect due to a recaptcha!");
-/*
+
                 String url = loginResponseDocument.html().split("var skypeHipUrl = \"")[1].split("\";")[0];
 
                 PacketBuilder pb = new PacketBuilder(account);
                 pb.setSendLoginHeaders(false);
-                System.out.println(url);
                 pb.setUrl(url);
                 pb.setType(RequestType.GET);
+                String imgUrl = pb.makeRequest();
 
-                String imgUrl = pb.makeRequest();  //< 200 / no data
-                String imageUrl2 = imgUrl.split("imageurl:'")[1]
-                        .split("',")[0];
+                String imageUrl2 = imgUrl.split("imageurl:'")[1].split("',")[0];
 
                 UserRecaptchaEvent event = new UserRecaptchaEvent(imageUrl2, account.getUsername());
                 account.getEventManager().executeEvent(event);
-
+                
                 String token = imgUrl.split("hid=")[1].split("&fid")[0];
                 String fid = url.split("&fid=")[1].split("&")[0];
-                System.out.println("fid" + fid);
-                System.out.println("token" + token);
-                System.out.println("answer" + event.getAnswer());
-                System.out.println("pic" + imageUrl2);
+
                 try {
                     Document loginResponse = postData(account.getUsername(), account.getPassword(), account, fid, event.getAnswer(), token);
                     handle(loginResponse, account);
@@ -116,9 +111,8 @@ public class Auth {
                 }catch(Exception e){
                     throw e;
                 }
-*/
-                throw new FailedToLoginException("CAPTCHA!");
-                //return;
+
+                return;
             } else {
                 Elements elements = loginResponseDocument.select(".message_error");
                 if (elements.size() > 0) {

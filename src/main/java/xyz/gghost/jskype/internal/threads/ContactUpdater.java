@@ -1,7 +1,6 @@
 package xyz.gghost.jskype.internal.threads;
 
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.packet.packets.GetContactsPacket;
 
 public class ContactUpdater extends Thread {
 
