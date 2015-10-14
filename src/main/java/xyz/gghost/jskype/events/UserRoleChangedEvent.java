@@ -12,9 +12,11 @@ public class UserRoleChangedEvent extends Event {
     private final User user;
     private final GroupUser.Role role;
     private final Group chat;
-    public UserRoleChangedEvent(Group group, User user, GroupUser.Role role) {
+    private final GroupUser updater;
+    public UserRoleChangedEvent(Group group, User user, GroupUser.Role role, GroupUser updater) {
         this.user = user;
         this.role = role;
+        this.updater = updater;
         chat = group;
     }
 

@@ -42,7 +42,7 @@ public class Poller extends Thread {
         while (this.isAlive() || breakLoop) {
             Thread processingThread = new Thread() {
                 public void run() {
-                    poll();
+                    poll(this);
                 }
             };
             threads.add(processingThread);
@@ -60,7 +60,7 @@ public class Poller extends Thread {
             thread.interrupt();
     }
 
-    private void poll() {
+    private void poll(Thread h) {
         PacketBuilder poll = new PacketBuilder(api);
         poll.setType(RequestType.POST);
         poll.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/endpoints/SELF/subscriptions/0/poll");
@@ -119,6 +119,7 @@ public class Poller extends Thread {
                     pastIds.add(object.getInt("id"));
             }
         }
+        threads.remove(h);
     }
 
 

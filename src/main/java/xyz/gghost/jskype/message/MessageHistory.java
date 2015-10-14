@@ -7,6 +7,7 @@ import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
+import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 
@@ -25,20 +26,20 @@ public class MessageHistory {
     }
     public void loadMoreMessages(){
 
-        Group convo = api.getGroupById(longId.contains("@") ? longId.split(":")[1].split("@")[0] : longId.split("8:")[1]);
-
         String nextUrl = this.nextUrl;
         if (nextUrl == null)
-            nextUrl = "https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + longId + "/messages?startTime=0&pageSize=51&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread";
+            nextUrl = "https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + (longId.contains("@") ? longId : "8:" + longId) + "/messages?startTime=0&pageSize=51&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread";
 
         PacketBuilder builder = new PacketBuilder(api);
         builder.setType(RequestType.GET);
         builder.setUrl(nextUrl);
 
         String data = builder.makeRequest();
-        if (data == null)
+        if (data == null) {
+            System.out.println("Failed to get users");
             return;
-
+        }
+        System.out.println("Getting json");
         JSONObject json = new JSONObject(data);
 
         try {
@@ -51,15 +52,19 @@ public class MessageHistory {
         JSONArray jsonArray = json.getJSONArray("messages");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonMessage = jsonArray.getJSONObject(i);
-            if(jsonMessage.getString("type").equals("MessagePoll")) {
+            if(jsonMessage.getString("type").equals("MessagePoll") || jsonMessage.getString("type").equals("Message")) {
                 Message message = new Message(FormatUtils.decodeText(jsonMessage.getString("content")));
                 User user;
 
                 try {
-                    user = getUser(jsonMessage.getString("from").split("8:")[1], convo);
+                    if (longId.contains("@"))
+                        user = getUser(jsonMessage.getString("from").split("8:")[1], api.getGroupById(NamingUtils.getThreadId(longId)));
+                    else
+                        user = api.getSimpleUser(jsonMessage.getString("from").split("8:")[1]);
                 }catch (Exception e ){
                     continue;
                 }
+                System.out.println("Got message V");
 
                 String content = "";
                 if(!jsonMessage.isNull("content"))
@@ -71,10 +76,9 @@ public class MessageHistory {
                     message.setId(jsonMessage.getString("skypeeditedid"));
                     message.setEdited(true);
                 }
-
                 message.setSender(user);
                 message.setTime(jsonMessage.getString("originalarrivaltime"));
-                message.setUpdateUrl("https://db3-client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + longId + "/messages");
+                message.setUpdateUrl("https://db3-client-s.gateway.messenger.live.com/v1/users/ME/conversations/" +  (longId.contains("@") ? longId : "8:" + longId) + "/messages");
                 message.setMessage(content);
                 knownMessages.add(message);
             }

@@ -81,20 +81,18 @@ public class PacketBuilder {
             } else if (code == 204) {
                 return "";
             } else {
-                if (code == 404 && url.toLowerCase().contains("endpoint")) {
-                    api.log("Lost connection to skype.\nReloggin!");
-                    try {
-                        api.login();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                if (code == 404 && url.toLowerCase().contains("endpoint"))
+                    return null;
 
                 //GetProfile will handle the debugging info
                 if (url.equals("https://api.skype.com/users/self/contacts/profiles"))
                     return null;
 
                 //Debug info
+                if (api.isDebugMode())
+                    for(StackTraceElement st : Thread.currentThread().getStackTrace())
+                        System.out.println(st);
+
                 api.log("Error contacting skype\nUrl: " + url + "\nCode: " + code + "\nData: " + data + "\nType: " + type);
                 for (Header header : headers)
                     api.log(header.getType() + ": " + header.getData());

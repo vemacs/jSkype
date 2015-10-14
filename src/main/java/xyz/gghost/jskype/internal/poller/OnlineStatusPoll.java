@@ -14,6 +14,7 @@ public class OnlineStatusPoll implements PollRequest {
     public OnlineStatusPoll(SkypeAPI api){
         this.api = api;
     }
+
     public void process(JSONObject obj, Group chat) {
         xyz.gghost.jskype.user.OnlineStatus status = xyz.gghost.jskype.user.OnlineStatus.OFFLINE;
 
@@ -39,7 +40,6 @@ public class OnlineStatusPoll implements PollRequest {
 
     }
     public boolean isMe(JSONObject object){
-
         return ((!object.isNull("resourceType")) && object.getString("resourceType").equals("UserPresence"));
     }
 

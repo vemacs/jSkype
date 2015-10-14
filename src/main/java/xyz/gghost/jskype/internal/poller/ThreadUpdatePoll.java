@@ -1,128 +1,104 @@
 package xyz.gghost.jskype.internal.poller;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.events.TopicChangedEvent;
 import xyz.gghost.jskype.events.UserJoinEvent;
 import xyz.gghost.jskype.events.UserLeaveEvent;
 import xyz.gghost.jskype.events.UserRoleChangedEvent;
-import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
+import xyz.gghost.jskype.internal.threads.Poller;
+import xyz.gghost.jskype.internal.utils.NamingUtils;
+import xyz.gghost.jskype.message.FormatUtils;
 import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 
-import java.util.ArrayList;
-
 public class ThreadUpdatePoll implements PollRequest {
 
-    /*
-
-            THIS CLASS IS HACKKY || RECODE IS A TODO
-
-     */
     private SkypeAPI api;
     public ThreadUpdatePoll(SkypeAPI api){
         this.api = api;
     }
-    public void process(JSONObject resource, Group chat) {
-        try{
-            Group oldGroup = null;
-
-            ArrayList<String> oldUsers2 = new ArrayList<String>();
-            ArrayList<String> oldUsers = new ArrayList<String>();
-            ArrayList<String> newUsers = new ArrayList<String>();
-
-
-            String shortId = NamingUtils.getThreadId(resource.getString("resourceLink"));
-
-            for (Group groups : api.getGroups()) {
-                if (groups.getId().equals(shortId)) {
-                    for (GroupUser usr : groups.getClients()) {
-                        oldUsers.add(usr.getUser().getUsername().toLowerCase());
-                        oldUsers2.add(usr.getUser().getUsername().toLowerCase());
+    protected String type;
+    public void process(JSONObject obj, Group chat) {
+        switch (type){
+            case "ThreadActivity/AddMember":
+                for (Element a : Jsoup.parse(FormatUtils.decodeText(obj.getString("content"))).getElementsByTag("addmember")){
+                    String username = "";
+                    String adder = "";
+                    User adderUser = null;
+                    User usernameUser = null;
+                    if (a.getElementsByTag("initiator").size() > 0) {
+                        adder = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
+                        adderUser = api.getUserByUsername(adder);
                     }
-                    oldGroup = groups;
+                    if (a.getElementsByTag("target").size() > 0) {
+                        username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).text());
+                        usernameUser = api.getUserByUsername(username);
+                    }
+                    GroupUser user = new GroupUser(usernameUser, GroupUser.Role.USER, (GroupImpl)chat);
+                    chat.getClients().add(user);
+                    api.updateGroup(chat); //is this needed?
+                    api.getEventManager().executeEvent(new UserJoinEvent(chat, usernameUser, adderUser));
                 }
-            }
-
-            if (oldGroup != null) {
-
-                String topic = resource.getJSONObject("properties").isNull("properties") ? "" : resource.getJSONObject("properties").getString("properties");
-
-                if ((api.getGroupById(shortId) != null))
-                    topic = api.getGroupById(shortId).getTopic();
-
-                String picture = resource.getJSONObject("properties").isNull("picture") ? "" : resource.getJSONObject("properties").getString("picture");
-
-                if ((api.getGroupById(shortId) != null) && (!api.getGroupById(shortId).getPictureUrl().equals(picture)))
-                    picture = api.getGroupById(shortId).getPictureUrl();
-
-                GroupImpl group = new GroupImpl(api, "19:" + shortId + "@thread.skype");
-
-                group.setPictureUrl(picture);
-                group.setTopic(topic);
-
-
-                for (int ii = 0; ii < resource.getJSONArray("members").length(); ii++) {
-                    JSONObject user = resource.getJSONArray("members").getJSONObject(ii);
-
-                    if (!(user.getString("id").contains("8:")))
-                        continue;
-
-                    newUsers.add(user.getString("id").split("8:")[1]); //add username
-
-                    try {
-                        GroupUser.Role role = GroupUser.Role.USER;
-
-                        User usr = api.getSimpleUser(user.getString("id").split("8:")[1]); //get user without searching skypes BD
-
-                        if (!user.getString("role").equals("User"))
-                            role = GroupUser.Role.MASTER;
-
-                        if (oldUsers.contains(usr.getUsername()))
-                            for (GroupUser users : oldGroup.getClients())
-                                if (users.getUser().getUsername().equals(usr.getUsername()))
-                                    if (role != users.role)
-                                        api.getEventManager().executeEvent(new UserRoleChangedEvent(oldGroup, users.getUser(), role));
-
-                        GroupUser gu = new GroupUser(usr, role, group);
-                        group.getClients().add(gu);
-
-                    } catch (Exception ignored) {
-
+                break;
+            case "ThreadActivity/DeleteMember":
+                for (Element a : Jsoup.parse(FormatUtils.decodeText(obj.getString("content"))).getElementsByTag("deletemember")){
+                    String username = "";
+                    String remover = "";
+                    User removerUser = null;
+                    GroupUser usernameUser = null;
+                    if (a.getElementsByTag("initiator").size() > 0) {
+                        remover = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
+                        removerUser = chat.getUserByUsername(remover).getUser();
+                    }
+                    if (a.getElementsByTag("target").size() > 0) {
+                        username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).text());
+                        usernameUser = chat.getUserByUsername(username);
+                    }
+                    if (usernameUser != null)
+                        chat.getClients().remove(usernameUser);
+                    api.updateGroup(chat); //is this needed?
+                    api.getEventManager().executeEvent(new UserLeaveEvent(chat, usernameUser.getUser(), removerUser));
+                }
+                break;
+            case "ThreadActivity/RoleUpdate":
+                for (Element a : Jsoup.parse(FormatUtils.decodeText(obj.getString("content"))).getElementsByTag("roleupdate")){
+                    String username = "";
+                    String updater = "";
+                    GroupUser updaterUser = null;
+                    GroupUser usernameUser = null;
+                    if (a.getElementsByTag("initiator").size() > 0) {
+                        updater = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
+                        updaterUser = chat.getUserByUsername(updater);
+                    }
+                    if (a.getElementsByTag("target").size() > 0) {
+                        username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).getElementsByTag("id").get(0).text());
+                        usernameUser = chat.getUserByUsername(username);
+                    }
+                    String role = a.getElementsByTag("role").get(0).text();
+                    if (usernameUser != null) {
+                        chat.getClients().remove(usernameUser);
+                        GroupUser gu = new GroupUser(usernameUser.getUser(), role.equals("user") ? GroupUser.Role.USER : GroupUser.Role.MASTER,(GroupImpl)chat);
+                        chat.getClients().add(gu);
+                        api.updateGroup(chat); //is this needed?
+                        api.getEventManager().executeEvent(new UserRoleChangedEvent(chat, usernameUser.getUser(), gu.role, updaterUser));
                     }
                 }
-
-
-                oldUsers.removeAll(newUsers);
-                newUsers.removeAll(oldUsers2);
-
-
-                for (String old : oldUsers)
-                    api.getEventManager().executeEvent(new UserLeaveEvent(group,  api.getSkypeInternals().getRequests().getUserMetaRequest().getUser(old)));
-
-                for (String news : newUsers)
-                    api.getEventManager().executeEvent(new UserJoinEvent(group, api.getSkypeInternals().getRequests().getUserMetaRequest().getUser(news)));
-
-                api.updateGroup(group);
-            }
-        }catch(Exception e){
-            api.log("#################################################");
-            if (api.isAllowLogging())
-                e.printStackTrace();
-            api.log("#################################################");
-            api.log("Failed to update group info. Have we just loaded?");
-            try{
-                api.log("Resource Link: " + resource.getString("resourceLink"));
-                api.log("Group ID: " + resource.getString("resourceLink").split("19:")[1].split("@")[0] + "@thread.skype");
-            }catch(Exception ea){}
+                break;
+            default:
+                break;
         }
-
     }
 
-    public boolean isMe(JSONObject name){
-        return ((!name.isNull("resourceType")) && name.getString("resourceType").equals("ThreadUpdate"));
+    public boolean isMe(JSONObject resource){
+        type = resource.getJSONObject("resource").isNull("messagetype") ? "" : resource.getJSONObject("resource").getString("messagetype");
+        return (!resource.getJSONObject("resource").isNull("messagetype") && resource.getJSONObject("resource").getString("messagetype").startsWith("ThreadActivity/")) ;
     }
-
 
 }

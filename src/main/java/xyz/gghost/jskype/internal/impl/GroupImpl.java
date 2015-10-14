@@ -49,9 +49,9 @@ public class GroupImpl implements Group {
 
     public void setAdmin(String usr, boolean admin)
     {
-        if (admin) {
+        if (admin)
             api.getSkypeInternals().getRequests().getUserRankingRequest().promoteUser(getLongId(), usr);
-        }else
+        else
             add(usr);
     }
 
@@ -69,6 +69,13 @@ public class GroupImpl implements Group {
 
     public String getLongId() {
         return id;
+    }
+
+    public GroupUser getUserByUsername(String username){
+        for (GroupUser user : getClients())
+            if (user.toString().equals(username))
+                return user;
+        return null;
     }
 
     public Message sendMessage(Message msg) {

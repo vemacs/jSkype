@@ -27,4 +27,5 @@ public interface Group {
     Message sendImage(File url);
     Message sendImage(URL url);
     List<GroupUser> getClients();
+    GroupUser getUserByUsername(String username);
 }

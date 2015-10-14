@@ -10,6 +10,7 @@ import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
 import xyz.gghost.jskype.internal.impl.UserImpl;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
+import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;

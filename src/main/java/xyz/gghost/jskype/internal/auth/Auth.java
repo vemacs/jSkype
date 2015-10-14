@@ -80,11 +80,12 @@ public class Auth {
     }
 
 
-    public void handle(Document loginResponseDocument, SkypeAPI account) throws Exception {
+    public boolean handle(Document loginResponseDocument, SkypeAPI account) throws Exception {
         try {
             Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
             if (inputs.size() > 0) {
                 account.getLoginTokens().setXToken(inputs.get(0).attr("value"));
+                return true;
             } else if (loginResponseDocument.html().contains("var skypeHipUrl = \"https://clien")) {
                 account.log("Failed to connect due to a recaptcha!");
 
@@ -105,14 +106,20 @@ public class Auth {
                 String fid = url.split("&fid=")[1].split("&")[0];
 
                 try {
-                    Document loginResponse = postData(account.getUsername(), account.getPassword(), account, fid, event.getAnswer(), token);
-                    handle(loginResponse, account);
-                    prepare(account);
+                    String answer = event.getAnswer();
+                    System.out.println(answer);
+                    if (answer == null){
+                        try {
+                            account.stop();
+                        }catch(NullPointerException e){} //program hasn't loaded
+                        return false;
+                    }
+                    Document loginResponse = postData(account.getUsername(), account.getPassword(), account, fid, answer, token);
+                    return handle(loginResponse, account);
                 }catch(Exception e){
                     throw e;
                 }
 
-                return;
             } else {
                 Elements elements = loginResponseDocument.select(".message_error");
                 if (elements.size() > 0) {

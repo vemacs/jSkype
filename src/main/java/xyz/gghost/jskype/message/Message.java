@@ -13,7 +13,6 @@ public class Message {
     private boolean edited = false;
     private String time;
     private String id;
-    private int timestamp;
 
     public Message(String message) {
         this.message = message;

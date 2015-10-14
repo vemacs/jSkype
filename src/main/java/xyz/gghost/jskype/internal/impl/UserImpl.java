@@ -3,6 +3,7 @@ package xyz.gghost.jskype.internal.impl;
 import lombok.Data;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.user.OnlineStatus;
 import xyz.gghost.jskype.user.User;
 
@@ -24,6 +25,16 @@ public class UserImpl implements User {
     public UserImpl(String username) {
         displayName = username;
         this.username = username;
+    }
+    public MessageHistory getMessageHistory(SkypeAPI api){
+        if(api.getSkypeInternals().getA().containsKey(username))
+            return api.getSkypeInternals().getA().get(username);
+        MessageHistory history = new MessageHistory(username, api);
+        api.getSkypeInternals().getA().put(username, history);
+        return history;
+    }
+    public String toString(){
+        return username;
     }
     public void sendContactRequest(SkypeAPI api){
         api.sendContactRequest(username);

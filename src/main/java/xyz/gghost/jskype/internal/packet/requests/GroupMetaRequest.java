@@ -45,7 +45,6 @@ public class GroupMetaRequest {
         if (!properties.isNull("picture"))
             group.setPictureUrl(properties.getString("picture").split("@")[1]);
 
-        group.setTopic(FormatUtils.decodeText(group.getTopic()));
 
         JSONArray membersArray = new JSONObject(data).getJSONArray("members");
         for (int ii = 0; ii < membersArray.length(); ii++) {
@@ -70,6 +69,15 @@ public class GroupMetaRequest {
                     e.printStackTrace();
             }
         }
+
+        String topic = group.getTopic();
+        if (topic.equals("")){
+            for (GroupUser user : group.getClients())
+                topic = topic + ", " + user.getUser().getUsername();
+            topic = topic.replaceFirst(", ", "");
+        }
+
+        group.setTopic(FormatUtils.decodeText(topic));
         return group;
     }
 
