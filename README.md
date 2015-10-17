@@ -1,5 +1,6 @@
 # jSkype
 
+Needs a recode as soon as possible although I'm trying to make what is here stable
 
 #Features (confirmed)
 - Ping chats with images
