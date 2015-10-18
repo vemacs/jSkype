@@ -25,8 +25,8 @@ public class StartupRequests {
     public StartupRequests(SkypeAPI api){
         this.api = api;
     }
-    public void setupContactsRealTime() throws FailedToGetContactsException, BadResponseException {
 
+    public void setupContactsRealTime() throws FailedToGetContactsException, BadResponseException {
         List<User> contacts;
 
         HashMap<String, Boolean> blocked = new HashMap<String, Boolean>();
@@ -43,10 +43,8 @@ public class StartupRequests {
         if (a == null) {
             api.log("Failed to request Skype for your contacts.");
             api.log("Code: " + packet.getCode() + "\nData: " + packet.getData() + "\nURL: " + packet.getUrl());
-
             if (api.getContacts().size() == 0)
                 api.getContacts().add(api.getSimpleUser(api.getUsername()));
-
             return;
         }
 
@@ -57,12 +55,12 @@ public class StartupRequests {
 
             for (Object o : lineItems) {
                 JSONObject jsonLineItem = (JSONObject) o;
-
                 usernames.add(jsonLineItem.getString("id"));
                 blocked.put(jsonLineItem.getString("id"), jsonLineItem.getBoolean("blocked"));
             }
 
             contacts = api.getSkypeInternals().getRequests().getUserMetaRequest().getUsers(usernames);
+
             if (contacts != null) {
                 for (User user : contacts) {
                     ((UserImpl)user).setContact(true);
@@ -76,12 +74,10 @@ public class StartupRequests {
     }
     public void setupRecent() throws AccountUnusableForRecentException {
         try {
-
             PacketBuilder packet = new PacketBuilder(api);
             packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/conversations?startTime=0&pageSize=200&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread");
             packet.setData("");
             packet.setType(RequestType.GET);
-
             String data = packet.makeRequest();
 
             if (data == null || data.equals(""))
@@ -95,7 +91,6 @@ public class StartupRequests {
                     api.updateGroup(new ContactGroupImpl(api, recent.getString("id")));
                 } else {
                     String id = recent.getString("id");
-
                     if (id.endsWith("@thread.skype")) {
                         try {
                             api.updateGroup(api.getSkypeInternals().getRequests().getGroupMetaRequest().getGroup(id));

@@ -6,6 +6,7 @@ import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
+import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.message.MessageHistory;
 import xyz.gghost.jskype.user.GroupUser;
@@ -49,21 +50,18 @@ public class GroupImpl implements Group {
 
     public void setAdmin(String usr, boolean admin)
     {
-        if (admin)
+        if (admin) {
             api.getSkypeInternals().getRequests().getUserRankingRequest().promoteUser(getLongId(), usr);
-        else
+        }else {
             add(usr);
+        }
     }
 
     public String getId() {
         try {
-            return id.split("@")[0].split(":")[1];
+            return NamingUtils.getThreadId(id);
         }catch(Exception e){
-            try {
-                return id.split("8:")[1];
-            }catch(Exception je){
-                return id;
-            }
+            return id;
         }
     }
 
@@ -79,15 +77,14 @@ public class GroupImpl implements Group {
     }
 
     public Message sendMessage(Message msg) {
-        return  api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, msg);
+        return api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, msg);
     }
     public Message sendMessage(String msg) {
-        return api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, new Message(msg));
+        return sendMessage(new Message(msg));
     }
     public Message sendImage(File url) {
         return api.getSkypeInternals().getRequests().getSendMessageRequest().sendPing(id, new Message(""), api.getSkypeInternals().getRequests().getPingPrepRequest().urlToId(url, id));
     }
-
     public Message sendImage(URL url) {
         return api.getSkypeInternals().getRequests().getSendMessageRequest().sendPing(id, new Message(""), api.getSkypeInternals().getRequests().getPingPrepRequest().urlToId(url.toString(), id));
     }
@@ -113,12 +110,14 @@ public class GroupImpl implements Group {
                 return true;
         return false;
     }
+
     public boolean isAdmin(String usr) {
         for (GroupUser user : getClients())
             if (user.getUser().getUsername().equals(usr) && user.role.equals(GroupUser.Role.MASTER))
                 return true;
         return false;
     }
+
     public void changeTopic(String topic){
         PacketBuilder pb = new PacketBuilder(api);
         pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + id + "/properties?name=topic");

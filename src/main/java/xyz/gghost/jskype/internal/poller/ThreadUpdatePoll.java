@@ -29,16 +29,14 @@ public class ThreadUpdatePoll implements PollRequest {
         switch (type){
             case "ThreadActivity/AddMember":
                 for (Element a : Jsoup.parse(FormatUtils.decodeText(obj.getString("content"))).getElementsByTag("addmember")){
-                    String username = "";
-                    String adder = "";
                     User adderUser = null;
                     User usernameUser = null;
                     if (a.getElementsByTag("initiator").size() > 0) {
-                        adder = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
+                        String adder = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
                         adderUser = api.getUserByUsername(adder);
                     }
                     if (a.getElementsByTag("target").size() > 0) {
-                        username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).text());
+                        String username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).text());
                         usernameUser = api.getUserByUsername(username);
                     }
                     GroupUser user = new GroupUser(usernameUser, GroupUser.Role.USER, (GroupImpl)chat);
@@ -49,16 +47,14 @@ public class ThreadUpdatePoll implements PollRequest {
                 break;
             case "ThreadActivity/DeleteMember":
                 for (Element a : Jsoup.parse(FormatUtils.decodeText(obj.getString("content"))).getElementsByTag("deletemember")){
-                    String username = "";
-                    String remover = "";
                     User removerUser = null;
                     GroupUser usernameUser = null;
                     if (a.getElementsByTag("initiator").size() > 0) {
-                        remover = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
+                        String remover = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
                         removerUser = chat.getUserByUsername(remover).getUser();
                     }
                     if (a.getElementsByTag("target").size() > 0) {
-                        username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).text());
+                        String username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).text());
                         usernameUser = chat.getUserByUsername(username);
                     }
                     if (usernameUser != null)
@@ -69,16 +65,14 @@ public class ThreadUpdatePoll implements PollRequest {
                 break;
             case "ThreadActivity/RoleUpdate":
                 for (Element a : Jsoup.parse(FormatUtils.decodeText(obj.getString("content"))).getElementsByTag("roleupdate")){
-                    String username = "";
-                    String updater = "";
                     GroupUser updaterUser = null;
                     GroupUser usernameUser = null;
                     if (a.getElementsByTag("initiator").size() > 0) {
-                        updater = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
+                        String updater = NamingUtils.getUsername(a.getElementsByTag("initiator").get(0).text());
                         updaterUser = chat.getUserByUsername(updater);
                     }
                     if (a.getElementsByTag("target").size() > 0) {
-                        username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).getElementsByTag("id").get(0).text());
+                        String username = NamingUtils.getUsername(a.getElementsByTag("target").get(0).getElementsByTag("id").get(0).text());
                         usernameUser = chat.getUserByUsername(username);
                     }
                     String role = a.getElementsByTag("role").get(0).text();

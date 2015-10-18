@@ -17,8 +17,8 @@ public class MessagePoll implements PollRequest {
     }
     public void process(JSONObject resource, Group chat) {
         xyz.gghost.jskype.message.Message message = new xyz.gghost.jskype.message.Message();
-
-        User user = Poller.getUser(NamingUtils.getUsername(resource.getString("from")), chat, api);
+        String username = NamingUtils.getUsername(resource.getString("from"));
+        User user = Poller.getUser(username, chat, api);
 
         String content = "";
 

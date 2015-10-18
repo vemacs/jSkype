@@ -27,7 +27,7 @@ public class Message {
      */
     public Message editMessage(SkypeAPI api, String edit) {
         setMessage(edit);
-        edited = true;
+        setEdited(true);
         return api.getSkypeInternals().getRequests().getSendMessageRequest().editMessage(this, message);
     }
 
@@ -38,7 +38,7 @@ public class Message {
      * @return the message
      */
     public Message updateEdit(SkypeAPI api) {
-        edited = true;
+        setEdited(true);
         return api.getSkypeInternals().getRequests().getSendMessageRequest().editMessage(this, message);
     }
 

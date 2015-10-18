@@ -8,24 +8,22 @@ import xyz.gghost.jskype.exception.AccountUnusableForRecentException;
 public class ConvoUpdater extends Thread{
     private final SkypeAPI api;
     private boolean first = true;
-    private boolean groupFail = false;
 
     public ConvoUpdater(SkypeAPI api) {
         this.api = api;
     }
+
     @Override
     public  void run() {
         while (this.isAlive()) {
             try {
-                if (!groupFail) {
-                    api.getSkypeInternals().getRequests().getStartupRequests().setupRecent();
-                    if (!api.isLoaded())
-                        api.getEventManager().executeEvent(new APILoadedEvent());
-                    api.setLoaded(true);
-                }
+                api.getSkypeInternals().getRequests().getStartupRequests().setupRecent();
+                if (!api.isLoaded())
+                    api.getEventManager().executeEvent(new APILoadedEvent());
+                api.setLoaded(true);
             } catch (AccountUnusableForRecentException e) {
                 if (first)
-                    groupFail = true;
+                    stop();
             } catch (Exception e){
                 e.printStackTrace();
             }

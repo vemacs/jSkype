@@ -18,14 +18,14 @@ public class UserImpl implements User {
     private String firstName = "";
     private String lastName = "";
     private OnlineStatus onlineStatus = OnlineStatus.OFFLINE;
-    public UserImpl() {
 
-    }
+    public UserImpl() {}
 
     public UserImpl(String username) {
         displayName = username;
         this.username = username;
     }
+
     public MessageHistory getMessageHistory(SkypeAPI api){
         if(api.getSkypeInternals().getA().containsKey(username))
             return api.getSkypeInternals().getA().get(username);
@@ -33,15 +33,19 @@ public class UserImpl implements User {
         api.getSkypeInternals().getA().put(username, history);
         return history;
     }
+
     public String toString(){
         return username;
     }
+
     public void sendContactRequest(SkypeAPI api){
         api.sendContactRequest(username);
     }
+
     public void sendContactRequest(SkypeAPI api, String hello){
         api.sendContactRequest(username, hello);
     }
+
     public Group getGroup(SkypeAPI api){
         return new ContactGroupImpl(api, "8:" + username);
     }

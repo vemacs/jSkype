@@ -22,15 +22,17 @@ public class TopicUpdatePoll implements PollRequest {
     public void process(JSONObject obj, Group chat) {
         String topic = "";
         Document htmlVals = Jsoup.parse(obj.getString("content"));
+
         try {
             topic = FormatUtils.decodeText(htmlVals.getElementsByTag("value").get(0).text());
         }catch(Exception e){
+            //If we fail to get the topic, use the usernames of group users
             for (GroupUser user : chat.getClients())
                 topic = topic + ", " + user.getUser().getUsername();
             topic = topic.replaceFirst(", ", "");
         }
 
-        String username = NamingUtils.getUsername(htmlVals.getElementsByTag("initiator").get(0).text()) ;
+        String username = NamingUtils.getUsername(htmlVals.getElementsByTag("initiator").get(0).text());
         String oldTopic = api.getGroupById(chat.getId()).getTopic();
 
         User user = Poller.getUser(username, chat, api);

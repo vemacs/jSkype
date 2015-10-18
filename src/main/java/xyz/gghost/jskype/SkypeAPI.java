@@ -108,10 +108,9 @@ public class SkypeAPI {
      * Get contact by username
      */
     public User getContact(String username) {
-        for (User contact : getContacts()) {
+        for (User contact : getContacts())
             if (contact.getUsername().equalsIgnoreCase(username))
                 return contact;
-        }
         return null;
     }
 
@@ -143,26 +142,22 @@ public class SkypeAPI {
      * Update a group object in the recent array
      */
     public void updateGroup(Group group){
-        Group oldGroup = null;
-        for (Group groupA : groups){
+        List<Group> oldGroups = new ArrayList<Group>();
+        for (Group groupA : groups)
             if (groupA.getId().equals(group.getId()))
-                oldGroup = groupA;
-        }
-        if (oldGroup != null)
-            getGroups().remove(oldGroup);
+                oldGroups.add(groupA);
+        getGroups().removeAll(oldGroups);
         getGroups().add(group);
     }
     /**
      * Update a User object in the contacts array
      */
     public void updateContact(User newUser){
-        User oldUser = null;
-        for (User user : getContacts()){
+        List<User> oldUsers = new ArrayList<User>();
+        for (User user : getContacts())
             if (user.getUsername().equals(newUser.getUsername()))
-                oldUser = user;
-        }
-        if (oldUser != null)
-            getContacts().remove(oldUser);
+                oldUsers.add(user);
+        getContacts().removeAll(oldUsers);
         getContacts().add(newUser);
     }
     /**
@@ -186,8 +181,9 @@ public class SkypeAPI {
         packet.setType(RequestType.GET);
         packet.setUrl("https://api.skype.com/search/users/any?keyWord=" + URLEncoder.encode(keywords)+ "&contactTypes[]=skype");
         String data = packet.makeRequest();
+
         if (data == null)
-            return null;
+            return new ArrayList<>();
 
         JSONArray jsonArray = new JSONArray(data);
         ArrayList<String> usernames = new ArrayList<String>();
@@ -195,7 +191,6 @@ public class SkypeAPI {
             JSONObject contact = jsonArray.getJSONObject(i);
             usernames.add(contact.getJSONObject("ContactCards").getJSONObject("Skype").getString("SkypeName"));
         }
-
         return getSkypeInternals().getRequests().getUserMetaRequest().getUsers(usernames);
     }
     /**
@@ -246,19 +241,17 @@ public class SkypeAPI {
                 .put("members", new JSONArray()
                                 .put(new JSONObject()
                                         .put("id", "8:" + getUsername())
-                                        .put("role", "Admin"))
-                );
+                                        .put("role", "Admin")));
+
         PacketBuilder buildGroup = new PacketBuilder(this);
         buildGroup.setData(json.toString());
         buildGroup.setUrl("https://client-s.gateway.messenger.live.com/v1/threads");
         buildGroup.setType(RequestType.POST);
         buildGroup.makeRequest();
+
         String idLong = buildGroup.getCon().getHeaderFields().get("Location").get(0).split("/threads/")[1];
-        PacketBuilder pb = new PacketBuilder(this);
-        pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + idLong + "/properties?name=topic");
-        pb.setType(RequestType.PUT);
-        pb.setData(new JSONObject().put("topic", "New Group").toString());
-        pb.makeRequest();
+        updateGroupName(idLong);
+
         return skypeInternals.getRequests().getGroupMetaRequest().getGroup(idLong);
     }
 
@@ -266,32 +259,38 @@ public class SkypeAPI {
      * Attempts to make a group with users... might not work
      */
     public Group createNewGroupWithUsers(ArrayList<String> users){
-        JSONArray members = new JSONArray().put(
-                new JSONObject()
+        JSONArray members = new JSONArray()
+                .put(new JSONObject()
                         .put("id", "8:" + getUsername())
-                        .put("role", "Admin")
-        );
+                        .put("role", "Admin"));
 
         for (String user : users)
-            members.put(new JSONObject().put("id", "8:" + user)
+            members.put(new JSONObject()
+                    .put("id", "8:" + user)
                     .put("role", "User"));
 
         JSONObject json = new JSONObject()
                 .put("members", members);
+
         PacketBuilder buildGroup = new PacketBuilder(this);
         buildGroup.setData(json.toString());
         buildGroup.setUrl("https://client-s.gateway.messenger.live.com/v1/threads");
         buildGroup.setType(RequestType.POST);
         buildGroup.makeRequest();
+
         String idLong = buildGroup.getCon().getHeaderFields().get("Location").get(0).split("/threads/")[1];
+        updateGroupName(idLong);
+
+        return skypeInternals.getRequests().getGroupMetaRequest().getGroup(idLong);
+    }
+
+    private void updateGroupName(String idLong){
         PacketBuilder pb = new PacketBuilder(this);
         pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + idLong + "/properties?name=topic");
         pb.setType(RequestType.PUT);
         pb.setData(new JSONObject().put("topic", "New Group").toString());
         pb.makeRequest();
-        return skypeInternals.getRequests().getGroupMetaRequest().getGroup(idLong);
     }
-
     /**
      * Join a group from a skype invite link
      */

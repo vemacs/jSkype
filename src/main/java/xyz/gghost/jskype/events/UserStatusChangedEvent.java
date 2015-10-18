@@ -13,5 +13,4 @@ import xyz.gghost.jskype.user.User;
 public class UserStatusChangedEvent extends Event {
     private final User user;
     private final OnlineStatus status;
-
 }

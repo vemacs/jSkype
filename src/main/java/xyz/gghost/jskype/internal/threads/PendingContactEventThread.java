@@ -18,17 +18,19 @@ public class PendingContactEventThread extends Thread {
     public PendingContactEventThread(SkypeAPI api) {
         this.api = api;
     }
+
+    // ???? recode
+
     @Override
     public void run() {
         while(this.isAlive()){
             try {
                 ArrayList<User> newRequests = api.getContactRequests();
                 if (!firstTime) {
-                    ArrayList<String> newLastUsers = new ArrayList<String>(); //allows other clients to accept the request
+                    ArrayList<String> newLastUsers = new ArrayList<>(); //allows other clients to accept the request
                     for (User user : newRequests) {
-                        if(!lastUsers.contains(user.getUsername())){
+                        if(!lastUsers.contains(user.getUsername()))
                             api.getEventManager().executeEvent(new UserPendingContactRequestEvent(user.getUsername()));
-                        }
                         newLastUsers.add(user.getUsername());
                     }
                     lastUsers = newLastUsers;
@@ -36,12 +38,11 @@ public class PendingContactEventThread extends Thread {
                     for (User user : newRequests)
                         lastUsers.add(user.getUsername());
                 }
-            } catch (Exception e){
+
+                Thread.sleep(1000 * 10);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            try {
-                Thread.sleep(1000 * 10);
-            } catch (InterruptedException ignored) {}
             firstTime = false;
         }
     }

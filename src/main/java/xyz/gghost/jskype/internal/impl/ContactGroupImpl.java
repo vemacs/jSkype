@@ -2,6 +2,7 @@ package xyz.gghost.jskype.internal.impl;
 
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
+import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.message.Message;
 import xyz.gghost.jskype.user.GroupUser;
 
@@ -29,35 +30,40 @@ public class ContactGroupImpl extends GroupImpl implements Group {
     public void leave() {
 
     }
-    @Override
+
     public List<GroupUser> getClients(){
-        List<GroupUser> users = new ArrayList<GroupUser>();
-        //TODO: add the two people
         return new ArrayList<GroupUser>();
     }
+
     public String getId() {
-        return id.split("8:")[1];
+        return NamingUtils.getUsername(id);
     }
+
     public String getUsername() {
-        return id.split("8:")[1];
+        return NamingUtils.getUsername(id);
     }
+
     public String getLongId() {
         return id;
     }
+
     public Message sendMessage(Message msg) {
         return api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, msg);
     }
+
     public Message sendMessage(String msg) {
         return api.getSkypeInternals().getRequests().getSendMessageRequest().sendMessage(id, new Message(msg));
     }
+
     public String getTopic() {
         return getUsername();
     }
+
     public boolean isAdmin() {
-        return false;
+        return true;
     }
 
     public boolean isAdmin(String usr) {
-        return false;
+        return true;
     }
 }

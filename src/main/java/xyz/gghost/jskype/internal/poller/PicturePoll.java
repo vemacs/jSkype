@@ -17,8 +17,9 @@ public class PicturePoll implements PollRequest {
     }
     public void process(JSONObject resource, Group chat) {
         String content = resource.getString("content");
-        User user = api.getUserByUsername(NamingUtils.getUsername(Jsoup.parse(content).getElementsByTag("initiator").get(0).text()));
-        String newUrl = content.split("<value>URL@")[1].split("<")[0];
+        String username = NamingUtils.getUsername(Jsoup.parse(content).getElementsByTag("initiator").get(0).text());
+        User user = api.getUserByUsername(username);
+        String newUrl = content.split("<value>URL@")[1].split("<")[0];        //TODO: jsoup
         api.getEventManager().executeEvent(new ChatPictureChangedEvent(chat, user, newUrl));
     }
 

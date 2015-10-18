@@ -44,7 +44,7 @@ public class Poller extends Thread {
     }
 
     public void stopThreads(){
-
+        //Removed
     }
 
     private void poll(Thread h) {

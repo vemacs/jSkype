@@ -25,7 +25,7 @@ import java.util.List;
 public class UserMetaRequest {
     private SkypeAPI api;
     /*
-                THIS CLASS WILL GET RECODED!          THIS CLASS WILL GET RECODED!          THIS CLASS WILL GET RECODED!
+        TODO: recode
      */
     public UserMetaRequest(SkypeAPI api){
         this.api = api;
@@ -85,6 +85,7 @@ public class UserMetaRequest {
             me.setLocation(json.getString("city"));
         if (!json.isNull("country"))
             me.setLocation(me.getLocation() + ", " + json.getString("country"));
+
         if (me.getLocation().startsWith(", "))
             me.setLocation(me.getLocation().replaceFirst(", ", ""));
 

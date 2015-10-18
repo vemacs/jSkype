@@ -9,10 +9,7 @@ import xyz.gghost.jskype.user.User;
 @Getter
 @AllArgsConstructor
 public class ChatPictureChangedEvent extends Event {
-
     private final Group group;
     private final User user;
     private final String newPicture;
-
-
 }

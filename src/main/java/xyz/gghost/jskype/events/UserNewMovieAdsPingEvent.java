@@ -13,6 +13,4 @@ public class UserNewMovieAdsPingEvent extends Event {
     private final User user;
     private final Group group;
     private final String id;
-
-
 }
