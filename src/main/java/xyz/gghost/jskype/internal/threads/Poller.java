@@ -64,7 +64,6 @@ public class Poller extends Thread {
                 JSONObject object = json.getJSONObject(i);
 
                 if (!(object.isNull("type") && object.isNull("resourceType"))) {
-
                     String resourceLink = object.isNull("resourceLink") ? "" : object.getString("resourceLink");
                     JSONObject resource = object.getJSONObject("resource");
 

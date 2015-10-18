@@ -1,5 +1,6 @@
 package xyz.gghost.jskype.internal.poller;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
@@ -9,12 +10,9 @@ import xyz.gghost.jskype.internal.threads.Poller;
 import xyz.gghost.jskype.message.FormatUtils;
 import xyz.gghost.jskype.user.User;
 
+@AllArgsConstructor
 public class MessagePoll implements PollRequest {
     private SkypeAPI api;
-
-    public MessagePoll(SkypeAPI api){
-        this.api = api;
-    }
 
     public void process(JSONObject resource, Group chat) {
         xyz.gghost.jskype.message.Message message = new xyz.gghost.jskype.message.Message();

@@ -10,7 +10,6 @@ import java.util.ArrayList;
  * Created by Ghost on 19/09/2015.
  */
 public class PendingContactEventThread extends Thread {
-
     private final SkypeAPI api;
     private boolean firstTime = true;
     private ArrayList<String> lastUsers = new ArrayList<String>();

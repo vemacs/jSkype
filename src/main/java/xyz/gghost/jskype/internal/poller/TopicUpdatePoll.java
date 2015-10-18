@@ -1,5 +1,6 @@
 package xyz.gghost.jskype.internal.poller;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,12 +14,9 @@ import xyz.gghost.jskype.message.FormatUtils;
 import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 
+@AllArgsConstructor
 public class TopicUpdatePoll implements PollRequest {
     private SkypeAPI api;
-
-    public TopicUpdatePoll(SkypeAPI api){
-        this.api = api;
-    }
 
     public void process(JSONObject obj, Group chat) {
         String topic = "";

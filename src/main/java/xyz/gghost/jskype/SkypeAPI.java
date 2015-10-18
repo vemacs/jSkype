@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class SkypeAPI {
-
     @Getter private List<Group> groups = new ArrayList<Group>();
     @Getter private List<User> contacts = new ArrayList<User>();
     @Getter private LoginTokens loginTokens = new LoginTokens();

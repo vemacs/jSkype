@@ -1,5 +1,6 @@
 package xyz.gghost.jskype.internal.poller;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -19,12 +20,13 @@ import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 
 public class ThreadUpdatePoll implements PollRequest {
-
     private SkypeAPI api;
+    protected String type;
+
     public ThreadUpdatePoll(SkypeAPI api){
         this.api = api;
     }
-    protected String type;
+
     public void process(JSONObject obj, Group chat) {
         switch (type){
             case "ThreadActivity/AddMember":
@@ -94,5 +96,4 @@ public class ThreadUpdatePoll implements PollRequest {
         type = resource.getJSONObject("resource").isNull("messagetype") ? "" : resource.getJSONObject("resource").getString("messagetype");
         return (!resource.getJSONObject("resource").isNull("messagetype") && resource.getJSONObject("resource").getString("messagetype").startsWith("ThreadActivity/")) ;
     }
-
 }

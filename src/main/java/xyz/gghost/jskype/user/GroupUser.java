@@ -3,9 +3,6 @@ package xyz.gghost.jskype.user;
 import lombok.AllArgsConstructor;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
 
-/**
- * Created by Ghost on 19/09/2015.
- */
 @AllArgsConstructor
 public class GroupUser{
     private User user;
