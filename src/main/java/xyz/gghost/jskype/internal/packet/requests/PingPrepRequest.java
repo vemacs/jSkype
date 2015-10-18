@@ -19,36 +19,41 @@ public class PingPrepRequest {
         this.api = api;
     }
 
-    public String urlToId(String url, String groupId){
+    public String urlToId(String url, String groupId) {
         String id = getId();
-        if (id == null) {
-            api.log("Failed to get id");
-            return null;
-        }
-        if (!allowRead(id, groupId)) {
-            api.log("Failed to set perms");
-            return null;
-        }
-        if(!writeData(id, url)){
-            api.log("Failed to set image data");
-            return null;
-        }
+        try {
+            if (id == null) {
+                api.log("Failed to get id");
+                return null;
+            }
+            if (!allowRead(id, groupId)) {
+                api.log("Failed to set perms");
+                return null;
+            }
+            if (!writeData(id, new URL(url).openStream())) {
+                api.log("Failed to set image data");
+                return null;
+            }
+        } catch (Exception e) {}
         return id;
     }
-    public String urlToId(File file, String groupId){
+    
+    public String urlToId(File file, String groupId) {
         String id = getId();
-        if (id == null) {
-            api.log("Failed to get id");
-            return null;
-        }
-        if (!allowRead(id, groupId)) {
-            api.log("Failed to set perms");
-            return null;
-        }
-        if(!writeData(id, file)){
-            api.log("Failed to set image data");
-            return null;
-        }
+        try {
+            if (id == null) {
+                api.log("Failed to get id");
+                return null;
+            }
+            if (!allowRead(id, groupId)) {
+                api.log("Failed to set perms");
+                return null;
+            }
+            if (!writeData(id, new FileInputStream(file))) {
+                api.log("Failed to set image data");
+                return null;
+            }
+        } catch (Exception e) {}
         return id;
     }
 
@@ -64,6 +69,7 @@ public class PingPrepRequest {
             return null;
         return new JSONObject(data).getString("id");
     }
+
     public boolean allowRead(String id, String longId){
         PacketBuilder packet = new PacketBuilder(api);
         packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/permissions");
@@ -74,44 +80,19 @@ public class PingPrepRequest {
         String data = packet.makeRequest();
         return data != null;
     }
-    public boolean writeData(String id, String url){
-        try {
-            URL image = new URL(url);
-            InputStream data = image.openStream();
 
+    public boolean writeData(String id, InputStream url){
+        try {
             PacketBuilderUploader packet = new PacketBuilderUploader(api);
             packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/content/imgpsh");
             packet.setSendLoginHeaders(false); //Disable skype for web authentication
             packet.setFile(true);
             packet.addHeader(new Header("Authorization", "skype_token " + api.getLoginTokens().getXToken())); //Use the windows client login style
             packet.setType(RequestType.PUT);
-
-            String dataS = packet.makeRequest(data);
-            if (dataS == null)
-                return false;
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-    public boolean writeData(String id, File url){
-        try {
-            InputStream data = new FileInputStream(url);
-
-            PacketBuilderUploader packet = new PacketBuilderUploader(api);
-
-            packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/content/imgpsh");
-            packet.setSendLoginHeaders(false); //Disable skype for web authentication
-            packet.setFile(true);
-            packet.addHeader(new Header("Authorization", "skype_token " + api.getLoginTokens().getXToken())); //Use the windows client login style
-            packet.setType(RequestType.PUT);
-
-            String dataS = packet.makeRequest(data);
+            String dataS = packet.makeRequest(url);
 
             if (dataS == null)
                 return false;
-
         }catch (Exception e){
             e.printStackTrace();
             return false;
