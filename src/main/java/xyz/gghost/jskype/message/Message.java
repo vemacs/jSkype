@@ -6,7 +6,6 @@ import xyz.gghost.jskype.user.User;
 
 @Data
 public class Message {
-
     private User sender;
     private String message;
     private String updateUrl;
@@ -18,8 +17,7 @@ public class Message {
         this.message = message;
     }
 
-    public Message() {
-    }
+    public Message() {}
 
 
     /**
@@ -41,5 +39,4 @@ public class Message {
         setEdited(true);
         return api.getSkypeInternals().getRequests().getSendMessageRequest().editMessage(this, message);
     }
-
 }

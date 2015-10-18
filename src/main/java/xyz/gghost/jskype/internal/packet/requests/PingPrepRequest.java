@@ -12,9 +12,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 
-/**
- * Created by Ghost on 10/10/2015.
- */
+
 public class PingPrepRequest {
     private SkypeAPI api;
     public PingPrepRequest(SkypeAPI api){

@@ -39,7 +39,6 @@ public class SkypeAPI {
     @Getter @Setter private boolean loaded;
     @Getter private SkypeInternals skypeInternals = new SkypeInternals(this);
     @Getter @Setter private boolean debugMode = false;
-
     private OnlineStatus s = OnlineStatus.ONLINE;
 
     public SkypeAPI(String username, String password) {
@@ -65,7 +64,6 @@ public class SkypeAPI {
             System.out.println(msg);
     }
 
-
     /**
      * Attempt to stop all skype threads
      * @return
@@ -89,6 +87,7 @@ public class SkypeAPI {
     public void s(OnlineStatus status) {
         s = status;
     }
+
     /**
      * This method will get as much data as possible about a user without contacting to skype
      */
@@ -96,6 +95,7 @@ public class SkypeAPI {
         User user = getContact(username);
         return user != null ? user : new UserImpl(username);
     }
+
     /**
      * get user by username
      */
@@ -103,6 +103,7 @@ public class SkypeAPI {
         User user = getContact(username);
         return user != null ? user : skypeInternals.getRequests().getUserMetaRequest().getUser(username);
     }
+
     /**
      * Get contact by username
      */
@@ -137,6 +138,7 @@ public class SkypeAPI {
         packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/presenceDocs/messagingService");
         packet.makeRequest();
     }
+
     /**
      * Update a group object in the recent array
      */
@@ -148,6 +150,7 @@ public class SkypeAPI {
         getGroups().removeAll(oldGroups);
         getGroups().add(group);
     }
+
     /**
      * Update a User object in the contacts array
      */
@@ -159,6 +162,7 @@ public class SkypeAPI {
         getContacts().removeAll(oldUsers);
         getContacts().add(newUser);
     }
+
     /**
      * Attempts to send a contact request
      */
@@ -172,6 +176,7 @@ public class SkypeAPI {
     public void sendContactRequest(String username, String greeting) {
         new GetPendingContactsPacket(this).sendRequest(username, greeting);
     }
+
     /**
      * Skype db lookup / search
      */
@@ -192,12 +197,14 @@ public class SkypeAPI {
         }
         return getSkypeInternals().getRequests().getUserMetaRequest().getUsers(usernames);
     }
+
     /**
      * Get user info about the account
      */
     public LocalAccount getAccountInfo(){
        return getSkypeInternals().getRequests().getUserMetaRequest().getMe();
     }
+
     /**
      * Change profile picture
      */
@@ -213,6 +220,7 @@ public class SkypeAPI {
             e.printStackTrace();
         }
     }
+
     /**
      * Update your profile picture from a url
      */
@@ -290,6 +298,7 @@ public class SkypeAPI {
         pb.setData(new JSONObject().put("topic", "New Group").toString());
         pb.makeRequest();
     }
+
     /**
      * Join a group from a skype invite link
      */
@@ -325,6 +334,7 @@ public class SkypeAPI {
     public void reJoinGroup(String longId) {
         skypeInternals.getRequests().getUserRankingRequest().addUser(longId, getUsername());
     }
+
     /**
      * Get contact requests
      * @return
@@ -334,6 +344,7 @@ public class SkypeAPI {
     public ArrayList<User> getContactRequests() throws BadResponseException, NoPendingContactsException {
         return new GetPendingContactsPacket(this).getPending();
     }
+
     public void acceptContactRequest(String username){
         new GetPendingContactsPacket(this).acceptRequest(username);
     }

@@ -7,6 +7,7 @@ import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.events.UserStatusChangedEvent;
 import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.internal.impl.UserImpl;
+import xyz.gghost.jskype.user.OnlineStatus;
 import xyz.gghost.jskype.user.User;
 
 @AllArgsConstructor
@@ -14,13 +15,13 @@ public class OnlineStatusPoll implements PollRequest {
     private SkypeAPI api;
 
     public void process(JSONObject obj, Group chat) {
-        xyz.gghost.jskype.user.OnlineStatus status = xyz.gghost.jskype.user.OnlineStatus.OFFLINE;
+        OnlineStatus status = OnlineStatus.OFFLINE;
 
         if (obj.getString("status").equals("Online"))
-            status = xyz.gghost.jskype.user.OnlineStatus.ONLINE;
+            status = OnlineStatus.ONLINE;
 
         if (obj.getString("status").equals("Busy"))
-            status = xyz.gghost.jskype.user.OnlineStatus.BUSY;
+            status = OnlineStatus.BUSY;
 
         try {
             User user = api.getUserByUsername(obj.getString("selfLink").split("/8:")[1].split("/")[0]);

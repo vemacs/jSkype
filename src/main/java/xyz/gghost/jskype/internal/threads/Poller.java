@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Poller extends Thread {
-
     private SkypeAPI api;
     public List<PollRequest> processors = new ArrayList<PollRequest>();
     public ArrayList<Integer> pastIds = new ArrayList<Integer>();
@@ -40,7 +39,6 @@ public class Poller extends Thread {
         while(true) {
             poll(this);
         }
-
     }
 
     public void stopThreads(){
@@ -132,5 +130,4 @@ public class Poller extends Thread {
             api.updateGroup(api.getSkypeInternals().getRequests().getGroupMetaRequest().getGroup(idLong));
         } catch (Exception e){}
     }
-
 }

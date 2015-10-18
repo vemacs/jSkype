@@ -6,7 +6,7 @@ import xyz.gghost.jskype.internal.impl.GroupImpl;
 @AllArgsConstructor
 public class GroupUser{
     private User user;
-    public final Role role;
+    private Role role;
     private GroupImpl group;
 
     @Override

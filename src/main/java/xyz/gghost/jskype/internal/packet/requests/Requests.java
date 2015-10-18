@@ -7,7 +7,6 @@ import xyz.gghost.jskype.SkypeAPI;
     I'm starting to question making this shitty class
  */
 public class Requests {
-
     @Getter private UserRankingRequest userRankingRequest;
     @Getter private GroupMetaRequest groupMetaRequest;
     @Getter private StartupRequests startupRequests;
