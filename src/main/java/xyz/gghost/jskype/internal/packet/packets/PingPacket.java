@@ -1,7 +1,7 @@
 package xyz.gghost.jskype.internal.packet.packets;
 
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 
 import java.net.URLEncoder;
@@ -14,7 +14,7 @@ public class PingPacket {
     }
 
     public void doNow() {
-        PacketBuilder ping = new PacketBuilder(api);
+        RequestBuilder ping = new RequestBuilder(api);
         ping.setType(RequestType.POST);
         ping.setUrl("https://web.skype.com/api/v1/session-ping");
         ping.setData("sessionId=" + api.getUuid().toString());
@@ -29,7 +29,7 @@ public class PingPacket {
             }
         }
 
-        PacketBuilder online = new PacketBuilder(api);
+        RequestBuilder online = new RequestBuilder(api);
         online.setType(RequestType.POST);
         online.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/endpoints/" + URLEncoder.encode(api.getLoginTokens().getEndPoint()) + "/active");        online.setData("{\"timeout\":7}");
         online.makeRequest();

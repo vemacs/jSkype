@@ -5,7 +5,7 @@ import xyz.gghost.jskype.internal.poller.*;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.ContactGroupImpl;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +35,6 @@ public class Poller extends Thread {
             add(new TopicUpdatePoll(api));
             add(new PingPoll(api));
         }});
-
         while(true) {
             poll(this);
         }
@@ -47,7 +46,7 @@ public class Poller extends Thread {
 
     private void poll(Thread h) {
         try {
-            PacketBuilder poll = new PacketBuilder(api);
+            RequestBuilder poll = new RequestBuilder(api);
             poll.setType(RequestType.POST);
             poll.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/endpoints/SELF/subscriptions/0/poll");
             poll.setData(" ");

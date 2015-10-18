@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.json.JSONArray;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.user.GroupUser;
@@ -31,7 +31,7 @@ public class MessageHistory {
         if (nextUrl == null)
             nextUrl = "https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + (longId.contains("@") ? longId : "8:" + longId) + "/messages?startTime=0&pageSize=51&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread";
 
-        PacketBuilder builder = new PacketBuilder(api);
+        RequestBuilder builder = new RequestBuilder(api);
         builder.setType(RequestType.GET);
         builder.setUrl(nextUrl);
         final String data = builder.makeRequest();

@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.impl.GroupImpl;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.message.FormatUtils;
@@ -27,7 +27,7 @@ public class GroupMetaRequest {
     public Group getGroup(String longId){
         List<GroupUser> groupMembers = new ArrayList<GroupUser>();
 
-        PacketBuilder members = new PacketBuilder(api);
+        RequestBuilder members = new RequestBuilder(api);
         members.setUrl("https://db3-client-s.gateway.messenger.live.com/v1/threads/" + longId + "?startTime=143335&pageSize=100&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread");
         members.setType(RequestType.GET);
 
@@ -85,7 +85,7 @@ public class GroupMetaRequest {
         try {
             ArrayList<GroupUser> groupMembers = new ArrayList<GroupUser>();
 
-            PacketBuilder members = new PacketBuilder(api);
+            RequestBuilder members = new RequestBuilder(api);
             members.setUrl("https://db3-client-s.gateway.messenger.live.com/v1/threads/" + id + "?startTime=143335&pageSize=100&view=msnp24Equivalent&targetType=Passport|Skype|Lync|Thread");
             members.setType(RequestType.GET);
 

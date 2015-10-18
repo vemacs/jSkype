@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.exception.BadResponseException;
 import xyz.gghost.jskype.exception.NoPendingContactsException;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.user.User;
 
@@ -21,7 +21,7 @@ public class GetPendingContactsPacket {
     }
 
     public ArrayList<User> getPending() throws NoPendingContactsException, BadResponseException {
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setType(RequestType.GET);
         packet.setUrl("https://api.skype.com/users/self/contacts/auth-request");
         String a = packet.makeRequest();
@@ -49,7 +49,7 @@ public class GetPendingContactsPacket {
         boolean canLog = api.isAllowLogging();
         api.setAllowLogging(false);
         String URL = "https://api.skype.com/users/self/contacts/auth-request/" + user + "/accept";
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setData("");
         packet.setUrl(URL);
         packet.setIsForm(true);
@@ -57,7 +57,7 @@ public class GetPendingContactsPacket {
         packet.makeRequest();
 
 
-        PacketBuilder accept = new PacketBuilder(api);
+        RequestBuilder accept = new RequestBuilder(api);
         accept.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/contacts/8:" + user);
         accept.setIsForm(true);
         accept.setType(RequestType.PUT);
@@ -65,7 +65,7 @@ public class GetPendingContactsPacket {
 
 
         String URL2 = "https://client-s.gateway.messenger.live.com/v1/users/ME/contacts/";
-        PacketBuilder packet2 = new PacketBuilder(api);
+        RequestBuilder packet2 = new RequestBuilder(api);
 
         //TODO: Find a replacement for json.org that supports json building
         String data  = "{\"contacts\": [";
@@ -95,7 +95,7 @@ public class GetPendingContactsPacket {
     }
     public void sendRequest(String user, String message){
         String URL = "https://api.skype.com/users/self/contacts/auth-request/" + user;
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setData("greeting=" + URLEncoder.encode(message));
         packet.setUrl(URL);
         packet.setIsForm(true);

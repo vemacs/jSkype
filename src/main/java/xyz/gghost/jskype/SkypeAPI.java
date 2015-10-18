@@ -10,8 +10,8 @@ import xyz.gghost.jskype.exception.NoPendingContactsException;
 //import xyz.gghost.jskype.internal.calling.CallingMaster;
 import xyz.gghost.jskype.internal.impl.SkypeInternals;
 import xyz.gghost.jskype.internal.impl.UserImpl;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
-import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
+import xyz.gghost.jskype.internal.packet.RequestUploaderBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.internal.packet.packets.GetPendingContactsPacket;
 import xyz.gghost.jskype.internal.auth.LoginTokens;
@@ -132,7 +132,7 @@ public class SkypeAPI {
      * @param a
      */
     public void updateStatus(OnlineStatus a){
-        PacketBuilder packet = new PacketBuilder(this);
+        RequestBuilder packet = new RequestBuilder(this);
         packet.setData("{\"status\":\"" +  Character.toString(a.name().charAt(0)).toUpperCase() + (a.name().substring(1).toLowerCase()) +"\"}");
         packet.setType(RequestType.PUT);
         packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/presenceDocs/messagingService");
@@ -181,7 +181,7 @@ public class SkypeAPI {
      * Skype db lookup / search
      */
     public List<User> searchSkypeDB(String keywords){
-        PacketBuilder packet = new PacketBuilder(this);
+        RequestBuilder packet = new RequestBuilder(this);
         packet.setType(RequestType.GET);
         packet.setUrl("https://api.skype.com/search/users/any?keyWord=" + URLEncoder.encode(keywords)+ "&contactTypes[]=skype");
         String data = packet.makeRequest();
@@ -211,7 +211,7 @@ public class SkypeAPI {
     public void changePictureFromFile(String url){
         try {
             //No point of making a new class just for this one small method
-            PacketBuilderUploader uploader = new PacketBuilderUploader(this);
+            RequestUploaderBuilder uploader = new RequestUploaderBuilder(this);
             uploader.setSendLoginHeaders(true);
             uploader.setUrl("https://api.skype.com/users/" + username + "/profile/avatar");
             uploader.setType(RequestType.PUT);
@@ -227,7 +227,7 @@ public class SkypeAPI {
     public void changePictureFromUrl(String url){
         try {
             //No point of making a new class just for this one small method
-            PacketBuilderUploader uploader = new PacketBuilderUploader(this);
+            RequestUploaderBuilder uploader = new RequestUploaderBuilder(this);
             uploader.setSendLoginHeaders(true);
             uploader.setUrl("https://api.skype.com/users/" + username + "/profile/avatar");
             uploader.setType(RequestType.PUT);
@@ -250,7 +250,7 @@ public class SkypeAPI {
                                         .put("id", "8:" + getUsername())
                                         .put("role", "Admin")));
 
-        PacketBuilder buildGroup = new PacketBuilder(this);
+        RequestBuilder buildGroup = new RequestBuilder(this);
         buildGroup.setData(json.toString());
         buildGroup.setUrl("https://client-s.gateway.messenger.live.com/v1/threads");
         buildGroup.setType(RequestType.POST);
@@ -279,7 +279,7 @@ public class SkypeAPI {
         JSONObject json = new JSONObject()
                 .put("members", members);
 
-        PacketBuilder buildGroup = new PacketBuilder(this);
+        RequestBuilder buildGroup = new RequestBuilder(this);
         buildGroup.setData(json.toString());
         buildGroup.setUrl("https://client-s.gateway.messenger.live.com/v1/threads");
         buildGroup.setType(RequestType.POST);
@@ -292,7 +292,7 @@ public class SkypeAPI {
     }
 
     private void updateGroupName(String idLong){
-        PacketBuilder pb = new PacketBuilder(this);
+        RequestBuilder pb = new RequestBuilder(this);
         pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + idLong + "/properties?name=topic");
         pb.setType(RequestType.PUT);
         pb.setData(new JSONObject().put("topic", "New Group").toString());
@@ -303,14 +303,14 @@ public class SkypeAPI {
      * Join a group from a skype invite link
      */
     public void joinInviteLink(String url){
-        PacketBuilder getId = new PacketBuilder(this);
+        RequestBuilder getId = new RequestBuilder(this);
         System.out.println(url);
         getId.setUrl("https://join.skype.com/api/v1/meetings/" + url.split(".com/")[1]);
         getId.setType(RequestType.GET);
         String a = getId.makeRequest();
         if (a == null)
             return;
-        PacketBuilder getLongId = new PacketBuilder(this);
+        RequestBuilder getLongId = new RequestBuilder(this);
         getLongId.setUrl("https://api.scheduler.skype.com/conversation/" + new JSONObject(a).get("longId"));
         getLongId.setType(RequestType.GET);
         String b = getLongId.makeRequest();

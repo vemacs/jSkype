@@ -8,7 +8,7 @@ import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.events.UserRecaptchaEvent;
 import xyz.gghost.jskype.exception.*;
 import xyz.gghost.jskype.internal.packet.Header;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 
 import java.net.URLEncoder;
@@ -16,21 +16,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Auth {
-
     private String url = "";
-    private PacketBuilder packet;
+    private RequestBuilder packet;
 
     private Document postData(String username, String password, SkypeAPI api, String id, String answer, String token) throws BadResponseException {
         Date now = new Date();
 
-        PacketBuilder getIdsPacket = new PacketBuilder(api);
+        RequestBuilder getIdsPacket = new RequestBuilder(api);
         getIdsPacket.setSendLoginHeaders(false);
         getIdsPacket.setUrl("https://login.skype.com/login?client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com");
         getIdsPacket.setType(RequestType.GET);
 
         String htmlIds = getIdsPacket.makeRequest();
+
         if (htmlIds == null)
             throw new BadResponseException();
+
         String pie = htmlIds.split("name=\"pie\" id=\"pie\" value=\"")[1].split("\"")[0];
         String etm = htmlIds.split("name=\"etm\" id=\"etm\" value=\"")[1].split("\"")[0];
 
@@ -54,7 +55,7 @@ public class Auth {
 
         String formData = data.toString();
 
-        PacketBuilder login = new PacketBuilder(api);
+        RequestBuilder login = new RequestBuilder(api);
         login.setSendLoginHeaders(false);
         login.setType(RequestType.POST);
         login.setIsForm(true);
@@ -62,11 +63,11 @@ public class Auth {
         login.setUrl("https://login.skype.com/login?client_id=578134&redirect_uri=https%3A%2F%2Fweb.skype.com");
 
         String html = login.makeRequest();
+
         if (html == null)
             throw new BadResponseException();
 
         return Jsoup.parse(html);
-
     }
 
     public void login(SkypeAPI api) throws Exception {
@@ -79,7 +80,7 @@ public class Auth {
         }
     }
 
-
+    //Shitty class with code from @SpongyBacon - concept recaptcha events
     public boolean handle(Document loginResponseDocument, SkypeAPI account) throws Exception {
         try {
             Elements inputs = loginResponseDocument.select("input[name=skypetoken]");
@@ -91,7 +92,7 @@ public class Auth {
 
                 String url = loginResponseDocument.html().split("var skypeHipUrl = \"")[1].split("\";")[0];
 
-                PacketBuilder pb = new PacketBuilder(account);
+                RequestBuilder pb = new RequestBuilder(account);
                 pb.setSendLoginHeaders(false);
                 pb.setUrl(url);
                 pb.setType(RequestType.GET);
@@ -137,8 +138,6 @@ public class Auth {
         }
     }
 
-
-
     public void prepare(SkypeAPI api) throws BadUsernamePasswordException, FailedToLoginException{
         authLogin(api);
         if (!reg(api)) {
@@ -152,7 +151,6 @@ public class Auth {
         save(api);
     }
 
-
     public void authLogin(SkypeAPI api) throws FailedToLoginException {
         url = location(api).split("://")[1].split("/")[0];
         api.getLoginTokens().setReg(packet.getCon().getHeaderField("Set-RegistrationToken").split(";")[0]);
@@ -161,7 +159,7 @@ public class Auth {
 
     public boolean save(SkypeAPI api) {
         String id = "{\"id\":\"messagingService\",\"type\":\"EndpointPresenceDoc\",\"selfLink\":\"uri\",\"publicInfo\":{\"capabilities\":\"video|audio\",\"type\":\"1\",\"skypeNameVersion\":\"skype.com\",\"nodeInfo\":\"2\",\"version\":\"2\"},\"privateInfo\":{\"epname\":\"Skype\"}}";
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setType(RequestType.PUT);
         packet.setData(id);
         packet.setUrl("https://" + url + "/v1/users/ME/endpoints/" + api.getLoginTokens().getEndPoint() + "/presenceDocs/messagingService");
@@ -169,7 +167,7 @@ public class Auth {
     }
 
     public boolean reg(SkypeAPI api) {
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         String id = "{\"channelType\":\"httpLongPoll\",\"template\":\"raw\",\"interestedResources\":[\"/v1/users/ME/conversations/ALL/properties\",\"/v1/users/ME/conversations/ALL/messages\",\"/v1/users/ME/contacts/ALL\",\"/v1/threads/ALL\"]}";
         packet.setData(id);
         packet.setType(RequestType.POST);
@@ -178,17 +176,18 @@ public class Auth {
     }
 
     public String location(SkypeAPI api) throws FailedToLoginException {
-        packet = new PacketBuilder(api);
+        packet = new RequestBuilder(api);
         packet.setUrl("https://client-s.gateway.messenger.live.com/v1/users/ME/endpoints");
         packet.setType(RequestType.POST);
         packet.setSendLoginHeaders(false);
-
         packet.addHeader(new Header("Authentication", "skypetoken=" + api.getLoginTokens().getXToken()));
         packet.setData("{}");
+
         String data = packet.makeRequest();
-        if (data == null) {
+
+        if (data == null)
             throw new FailedToLoginException("Bad account!");
-        }
+
         return packet.getCon().getHeaderField("Location");
     }
 }

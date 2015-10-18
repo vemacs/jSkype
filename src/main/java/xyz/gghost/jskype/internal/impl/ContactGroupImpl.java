@@ -13,23 +13,18 @@ import java.util.List;
  * Created by Ghost on 19/09/2015.
  */
 public class ContactGroupImpl extends GroupImpl implements Group {
-
     private String id;
     private SkypeAPI api;
+
     public ContactGroupImpl(SkypeAPI api, String longId){
         super(api, longId);
         this.id = longId;
         this.api = api;
     }
-    public void kick(String usr) {
 
-    }
-    public void add(String usr) {
-
-    }
-    public void leave() {
-
-    }
+    public void kick(String usr) {}
+    public void add(String usr) {}
+    public void leave() {}
 
     public List<GroupUser> getClients(){
         return new ArrayList<GroupUser>();

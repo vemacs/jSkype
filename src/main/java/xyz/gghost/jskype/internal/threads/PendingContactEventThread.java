@@ -37,11 +37,9 @@ public class PendingContactEventThread extends Thread {
                     for (User user : newRequests)
                         lastUsers.add(user.getUsername());
                 }
-
                 Thread.sleep(1000 * 10);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+            } catch (Exception e) {}
             firstTime = false;
         }
     }

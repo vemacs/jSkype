@@ -1,42 +1,35 @@
 package xyz.gghost.jskype.internal.packet.requests;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.impl.GroupImpl;
 import xyz.gghost.jskype.internal.impl.LocalAccountImpl;
 import xyz.gghost.jskype.internal.impl.UserImpl;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
-import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.message.FormatUtils;
-import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.LocalAccount;
 import xyz.gghost.jskype.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Ghost on 10/10/2015.
- */
+@AllArgsConstructor
 public class UserMetaRequest {
     private SkypeAPI api;
     /*
         TODO: recode
+        TODO: recode
      */
-    public UserMetaRequest(SkypeAPI api){
-        this.api = api;
-    }
 
     public LocalAccount getMe() {
         LocalAccountImpl me = new LocalAccountImpl();
+        RequestBuilder admin = new RequestBuilder(api);
 
-        PacketBuilder admin = new PacketBuilder(api);
         admin.setType(RequestType.GET);
         admin.setUrl("https://api.skype.com/users/self/");
+
         String adminData = admin.makeRequest();
 
         if (adminData != null) {
@@ -51,7 +44,7 @@ public class UserMetaRequest {
                 me.setEmail(jsonA.getString("email"));
         }
 
-        PacketBuilder profile = new PacketBuilder(api);
+        RequestBuilder profile = new RequestBuilder(api);
         profile.setType(RequestType.GET);
         profile.setUrl("https://api.skype.com/users/self/profile/");
         String profileData = profile.makeRequest();
@@ -88,7 +81,6 @@ public class UserMetaRequest {
 
         if (me.getLocation().startsWith(", "))
             me.setLocation(me.getLocation().replaceFirst(", ", ""));
-
         return me;
     }
 
@@ -96,8 +88,7 @@ public class UserMetaRequest {
         if(username.equalsIgnoreCase("echo123"))
             return minorUserData(username);
 
-        PacketBuilder packet = new PacketBuilder(api);
-
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setType(RequestType.POST);
         packet.setUrl("https://api.skype.com/users/self/contacts/profiles");
         packet.setData("contacts[]=" + username);
@@ -114,7 +105,6 @@ public class UserMetaRequest {
 
         try {
             UserImpl user = new UserImpl(username);
-
             data = data.replaceFirst("\\[", "").replace("]", "");
             JSONObject jsonObject = new JSONObject(data); //ln 50
 
@@ -134,21 +124,19 @@ public class UserMetaRequest {
     }
     public List<User> getUsers(List<String> usernames) {
         List<User> contacts = new ArrayList<User>();
-        PacketBuilder packet = new PacketBuilder(api);
 
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setType(RequestType.POST);
         packet.setUrl("https://api.skype.com/users/self/contacts/profiles");
         packet.setData("contacts[]=");
+        packet.setIsForm(true);
 
         boolean first = true;
-
         for (String username : usernames) {
             if (!username.equals("echo123"))
-                packet.setData( packet.getData() + (first ? "" : "&contacts[]=") + username);
+                packet.setData(packet.getData() + (first ? "" : "&contacts[]=") + username);
             first = false;
         }
-
-        packet.setIsForm(true);
 
         String data =  packet.makeRequest();
         if (data == null)
@@ -187,10 +175,11 @@ public class UserMetaRequest {
         return new UserImpl(username);
     }
 
-    public String getDisplayName(String data, int count){
+    private String getDisplayName(String data, int count){
         return (data.split("firstname\":")[count].split("\",\"")[0]).replace("\"", "");
     }
-    public String getDisplayName(String data){
+
+    private String getDisplayName(String data){
         return data.split("firstname\":\"")[1].split("\",\"")[0];
     }
 }

@@ -2,7 +2,7 @@ package xyz.gghost.jskype.internal.packet.requests;
 
 import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.message.Message;
 
@@ -17,7 +17,7 @@ public class SendMessage {
             return msg;
         msg.setMessage(edit);
 
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setType(RequestType.POST);
         packet.setData(new JSONObject().put("content", msg.getMessage())
                 .put("messagetype", "RichText")
@@ -38,7 +38,7 @@ public class SendMessage {
         msg.setTime(id);
         msg.setId(id);
 
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setType(RequestType.POST);
         String data = "{content: \"<URIObject type=\\\"PicturePoll.1\\\" uri=\\\"https://api.asm.skype.com/v1/objects/" + ids + "\\\" url_thumbnail=\\\"https://api.asm.skype.com/v1/objects/"+ ids + "/views/imgt1\\\">To view this shared photo, go to: <a href=\\\"https://api.asm.skype.com/s/i?" + ids + "\\\">https://api.asm.skype.com/s/i?" + ids + "<\\/a><OriginalName v=\\\"^005CFF2010F86CC63570CA528D9B2CCFE3BF3B54DF8A01E92E^pimgpsh_thumbnail_win_distr.jpg\\\"/><meta type=\\\"photo\\\" originalName=\\\"^005CFF2010F86CC63570CA528D9B2CCFE3BF3B54DF8A01E92E^pimgpsh_thumbnail_win_distr.jpg\\\"/><\\/URIObject>\", messagetype: \"RichText/UriObject\", contenttype: \"text\", clientmessageid: \"" + id + "\"}";
         packet.setData(data);
@@ -56,7 +56,7 @@ public class SendMessage {
         msg.setTime(id);
         msg.setId(id);
 
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setType(RequestType.POST);
         packet.setData(new JSONObject().put("content", msg.getMessage())
                 .put("messagetype", "RichText")

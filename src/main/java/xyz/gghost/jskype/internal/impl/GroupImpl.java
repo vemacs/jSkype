@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import xyz.gghost.jskype.Group;
 import xyz.gghost.jskype.SkypeAPI;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.internal.utils.NamingUtils;
 import xyz.gghost.jskype.message.Message;
@@ -20,7 +20,6 @@ import java.util.List;
  * Created by Ghost on 19/09/2015.
  */
 public class GroupImpl implements Group {
-
     @Setter @Getter private String topic = "";
     @Setter @Getter private String id = "";
     @Setter @Getter private String pictureUrl = "";
@@ -119,7 +118,7 @@ public class GroupImpl implements Group {
     }
 
     public void changeTopic(String topic){
-        PacketBuilder pb = new PacketBuilder(api);
+        RequestBuilder pb = new RequestBuilder(api);
         pb.setUrl("https://client-s.gateway.messenger.live.com/v1/threads/" + id + "/properties?name=topic");
         pb.setType(RequestType.PUT);
         pb.setData("{\"topic\":\""+topic+"\"}");

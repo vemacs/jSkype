@@ -3,8 +3,8 @@ package xyz.gghost.jskype.internal.packet.requests;
 import org.json.JSONObject;
 import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.Header;
-import xyz.gghost.jskype.internal.packet.PacketBuilder;
-import xyz.gghost.jskype.internal.packet.PacketBuilderUploader;
+import xyz.gghost.jskype.internal.packet.RequestBuilder;
+import xyz.gghost.jskype.internal.packet.RequestUploaderBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class PingPrepRequest {
         } catch (Exception e) {}
         return id;
     }
-    
+
     public String urlToId(File file, String groupId) {
         String id = getId();
         try {
@@ -58,7 +58,7 @@ public class PingPrepRequest {
     }
 
     public String getId(){
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setUrl("https://api.asm.skype.com/v1/objects");
         packet.setData(" ");
         packet.setSendLoginHeaders(false); //Disable skype for web authentication
@@ -71,7 +71,7 @@ public class PingPrepRequest {
     }
 
     public boolean allowRead(String id, String longId){
-        PacketBuilder packet = new PacketBuilder(api);
+        RequestBuilder packet = new RequestBuilder(api);
         packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/permissions");
         packet.setData("{\"" + longId + "\":[\"read\"]}");
         packet.setSendLoginHeaders(false); //Disable skype for web authentication
@@ -83,7 +83,7 @@ public class PingPrepRequest {
 
     public boolean writeData(String id, InputStream url){
         try {
-            PacketBuilderUploader packet = new PacketBuilderUploader(api);
+            RequestUploaderBuilder packet = new RequestUploaderBuilder(api);
             packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/content/imgpsh");
             packet.setSendLoginHeaders(false); //Disable skype for web authentication
             packet.setFile(true);
