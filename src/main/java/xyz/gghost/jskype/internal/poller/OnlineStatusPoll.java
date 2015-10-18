@@ -16,7 +16,6 @@ public class OnlineStatusPoll implements PollRequest {
 
     public void process(JSONObject obj, Group chat) {
         OnlineStatus status = OnlineStatus.OFFLINE;
-
         if (obj.getString("status").equals("Online"))
             status = OnlineStatus.ONLINE;
 
@@ -31,12 +30,12 @@ public class OnlineStatusPoll implements PollRequest {
 
             UserImpl userImpl = (UserImpl)api.getUserByUsername(NamingUtils.getUsername("selfLink"));
             userImpl.setOnlineStatus(status);
+
             api.updateContact(userImpl);
         }catch(Exception e){
             //We came online
             api.s(status);
         }
-
     }
 
     public boolean isMe(JSONObject object){
