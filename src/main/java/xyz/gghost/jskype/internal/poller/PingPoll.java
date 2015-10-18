@@ -34,5 +34,4 @@ public class PingPoll implements PollRequest {
     public boolean isMe(JSONObject resource) {
         return (!resource.getJSONObject("resource").isNull("messagetype")) && (resource.getJSONObject("resource").getString("messagetype").startsWith("RichText/"));
     }
-
 }

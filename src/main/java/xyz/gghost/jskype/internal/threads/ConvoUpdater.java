@@ -25,7 +25,8 @@ public class ConvoUpdater extends Thread{
                 if (first)
                     stop();
             } catch (Exception e){
-                e.printStackTrace();
+                if (api.isDebugMode())
+                    e.printStackTrace();
             }
             try {
                 Thread.sleep(15000);

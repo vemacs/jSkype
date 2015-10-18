@@ -14,11 +14,12 @@ import xyz.gghost.jskype.user.GroupUser;
 import xyz.gghost.jskype.user.User;
 
 public class TopicUpdatePoll implements PollRequest {
-
     private SkypeAPI api;
+
     public TopicUpdatePoll(SkypeAPI api){
         this.api = api;
     }
+
     public void process(JSONObject obj, Group chat) {
         String topic = "";
         Document htmlVals = Jsoup.parse(obj.getString("content"));
@@ -44,5 +45,4 @@ public class TopicUpdatePoll implements PollRequest {
     public boolean isMe(JSONObject resource){
         return (!resource.getJSONObject("resource").isNull("messagetype") && resource.getJSONObject("resource").getString("messagetype").equals("ThreadActivity/TopicUpdate")) ;
     }
-
 }

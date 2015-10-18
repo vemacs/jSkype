@@ -127,11 +127,9 @@ public class Poller extends Thread {
             return;
         try {
             String idLong = resourceL.split("conversations/")[1].split("/")[0];
-
             for (Group group : api.getGroups())
                 if (group.getLongId().equals(idLong))
                     return;
-
             api.updateGroup(api.getSkypeInternals().getRequests().getGroupMetaRequest().getGroup(idLong));
         } catch (Exception e){}
     }

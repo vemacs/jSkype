@@ -20,5 +20,4 @@ public class NamingUtils {
             a = a.split("@")[0];
         return a;
     }
-
 }

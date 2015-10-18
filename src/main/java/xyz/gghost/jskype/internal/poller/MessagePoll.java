@@ -10,11 +10,12 @@ import xyz.gghost.jskype.message.FormatUtils;
 import xyz.gghost.jskype.user.User;
 
 public class MessagePoll implements PollRequest {
-
     private SkypeAPI api;
+
     public MessagePoll(SkypeAPI api){
         this.api = api;
     }
+
     public void process(JSONObject resource, Group chat) {
         xyz.gghost.jskype.message.Message message = new xyz.gghost.jskype.message.Message();
         String username = NamingUtils.getUsername(resource.getString("from"));
@@ -41,6 +42,7 @@ public class MessagePoll implements PollRequest {
 
         api.getEventManager().executeEvent(new UserChatEvent(chat, user, message));
     }
+
     public boolean isMe(JSONObject name){
         return (!name.getJSONObject("resource").isNull("messagetype")) && (name.getJSONObject("resource").getString("messagetype").equals("RichText") || name.getJSONObject("resource").getString("messagetype").equals("Text"));
     }

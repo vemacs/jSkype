@@ -6,8 +6,7 @@ import xyz.gghost.jskype.SkypeAPI;
 import xyz.gghost.jskype.internal.packet.packets.PingPacket;
 
 public class Ping extends Thread {
-    @Getter
-    private PingPacket ping;
+    @Getter private PingPacket ping;
 
     public Ping(SkypeAPI api) {
         ping = new PingPacket(api);

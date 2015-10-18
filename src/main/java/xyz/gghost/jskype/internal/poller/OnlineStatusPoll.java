@@ -9,8 +9,8 @@ import xyz.gghost.jskype.internal.impl.UserImpl;
 import xyz.gghost.jskype.user.User;
 
 public class OnlineStatusPoll implements PollRequest {
-
     private SkypeAPI api;
+
     public OnlineStatusPoll(SkypeAPI api){
         this.api = api;
     }
@@ -39,8 +39,8 @@ public class OnlineStatusPoll implements PollRequest {
         }
 
     }
+
     public boolean isMe(JSONObject object){
         return ((!object.isNull("resourceType")) && object.getString("resourceType").equals("UserPresence"));
     }
-
 }

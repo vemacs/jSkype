@@ -3,7 +3,6 @@ package xyz.gghost.jskype.message;
 import lombok.Getter;
 
 public class MessageBuilder {
-
     private StringBuilder outHtml = new StringBuilder("");
 
     @Getter private boolean blink, italic, bold, underlined, strikethrough, code;
