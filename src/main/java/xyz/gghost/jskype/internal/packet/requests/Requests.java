@@ -4,22 +4,16 @@ import lombok.Getter;
 import xyz.gghost.jskype.SkypeAPI;
 
 /**
- * Created by Ghost on 10/10/2015.
+    I'm starting to question making this shitty class
  */
 public class Requests {
-    @Getter
-    private UserRankingRequest userRankingRequest;
-    @Getter
-    private GroupMetaRequest groupMetaRequest;
-    @Getter
-    private StartupRequests startupRequests;
-    @Getter
-    private SendMessage sendMessageRequest;
-    @Getter
-    private PingPrepRequest pingPrepRequest;
-    @Getter
-    private UserMetaRequest userMetaRequest;
 
+    @Getter private UserRankingRequest userRankingRequest;
+    @Getter private GroupMetaRequest groupMetaRequest;
+    @Getter private StartupRequests startupRequests;
+    @Getter private SendMessage sendMessageRequest;
+    @Getter private PingPrepRequest pingPrepRequest;
+    @Getter private UserMetaRequest userMetaRequest;
 
     public Requests(SkypeAPI api){
         userRankingRequest = new UserRankingRequest(api);

@@ -37,7 +37,7 @@ public class PingPrepRequest {
         }
         return id;
     }
-    public String urlToId(File url, String groupId){
+    public String urlToId(File file, String groupId){
         String id = getId();
         if (id == null) {
             api.log("Failed to get id");
@@ -47,7 +47,7 @@ public class PingPrepRequest {
             api.log("Failed to set perms");
             return null;
         }
-        if(!writeData(id, url)){
+        if(!writeData(id, file)){
             api.log("Failed to set image data");
             return null;
         }
@@ -69,9 +69,7 @@ public class PingPrepRequest {
     public boolean allowRead(String id, String longId){
         PacketBuilder packet = new PacketBuilder(api);
         packet.setUrl("https://api.asm.skype.com/v1/objects/" + id + "/permissions");
-
         packet.setData("{\"" + longId + "\":[\"read\"]}");
-
         packet.setSendLoginHeaders(false); //Disable skype for web authentication
         packet.addHeader(new Header("Authorization", "skype_token " + api.getLoginTokens().getXToken()));  //Use the windows client login style
         packet.setType(RequestType.PUT);
@@ -80,7 +78,6 @@ public class PingPrepRequest {
     }
     public boolean writeData(String id, String url){
         try {
-
             URL image = new URL(url);
             InputStream data = image.openStream();
 

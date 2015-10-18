@@ -6,9 +6,6 @@ import xyz.gghost.jskype.internal.packet.PacketBuilder;
 import xyz.gghost.jskype.internal.packet.RequestType;
 import xyz.gghost.jskype.message.Message;
 
-/**
- * Created by Ghost on 10/10/2015.
- */
 public class SendMessage {
     private SkypeAPI api;
     public SendMessage(SkypeAPI api){
@@ -16,20 +13,17 @@ public class SendMessage {
     }
 
     public Message editMessage(Message msg, String edit) {
-        PacketBuilder packet = new PacketBuilder(api);
-        packet.setType(RequestType.POST);
-
-        msg.setMessage(edit);
-
         if (edit == null || msg == null)
             return msg;
+        msg.setMessage(edit);
 
+        PacketBuilder packet = new PacketBuilder(api);
+        packet.setType(RequestType.POST);
         packet.setData(new JSONObject().put("content", msg.getMessage())
                 .put("messagetype", "RichText")
                 .put("contenttype", "text")
                 .put("skypeeditedid", msg.getId())
                 .toString());
-
         packet.setUrl(msg.getUpdateUrl());
         packet.makeRequest();
 
@@ -50,12 +44,10 @@ public class SendMessage {
         packet.setData(data);
         packet.setUrl(url);
         packet.makeRequest();
-
         return msg;
     }
 
     public Message sendMessage(String longId, Message msg) {
-
         String id = String.valueOf(System.currentTimeMillis());
         String url = "https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/" + longId + "/messages";
 

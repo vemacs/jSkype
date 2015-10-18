@@ -86,7 +86,6 @@ public class StartupRequests {
             JSONArray jsonArray = new JSONObject(data).getJSONArray("conversations");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject recent = jsonArray.getJSONObject(i);
-
                 if (recent.getString("targetLink").contains("/contacts/8:")) {
                     api.updateGroup(new ContactGroupImpl(api, recent.getString("id")));
                 } else {

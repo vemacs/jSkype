@@ -1,6 +1,5 @@
 package xyz.gghost.jskype.internal.packet;
 
-import sun.security.validator.ValidatorException;
 import xyz.gghost.jskype.SkypeAPI;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 
 public class PacketBuilder {
     protected SkypeAPI api;
-    //TODO: Recode -> this is from an older version of jSkype
     @Getter @Setter protected String data = "";
     @Getter @Setter protected String url = "";
     @Getter @Setter protected RequestType type = null;
@@ -47,11 +45,14 @@ public class PacketBuilder {
             con.setRequestProperty("Content-Type", isForm ? "application/x-www-form-urlencoded" : (file ? "application/octet-stream" : "application/json; charset=utf-8"));
             con.setRequestProperty("Content-Length", Integer.toString(data.getBytes().length));
             con.setRequestProperty("User-Agent", "0/7.7.0.103// libhttpX.X");
+            con.setDoOutput(true);
+
             if (!cookies.equals(""))
                 con.setRequestProperty("Cookie", cookies);
-            con.setDoOutput(true);
+
             if (sendLoginHeaders)
                 addLogin(api);
+
             for (Header s : headers)
                 con.addRequestProperty(s.getType(), s.getData());
 
@@ -61,14 +62,16 @@ public class PacketBuilder {
                 wr.flush();
                 wr.close();
             }
+
             code = con.getResponseCode();
             if (code == 200 || code == 201) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
                 StringBuffer response = new StringBuffer();
-                while ((inputLine = in.readLine()) != null) {
+
+                while ((inputLine = in.readLine()) != null)
                     response.append(inputLine);
-                }
+
                 in.close();
                 return response.toString() == null ? "" : response.toString();
 
@@ -81,12 +84,11 @@ public class PacketBuilder {
             } else if (code == 204) {
                 return "";
             } else {
+
                 if (code == 404 && url.toLowerCase().contains("endpoint")){
                     try {
                         api.login();
-                    }catch(Exception e){
-
-                    }
+                    }catch(Exception e){}
                 }
 
                 //GetProfile will handle the debugging info
@@ -106,15 +108,14 @@ public class PacketBuilder {
             }
 
         } catch (Exception e) {
-
             if (e.getMessage().contains("sun.security.validator.ValidatorException"))
                 return null; //Java or microsoft just had a brain fart
+
             api.log("================================================");
             api.log("========Unable to request  the skype api========");
             api.log("================================================");
             api.log("Error: " + e.getMessage());
             api.log("URL: " + url);
-
             return null;
         }
     }
