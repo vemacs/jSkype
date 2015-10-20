@@ -120,10 +120,9 @@ public class SkypeAPI {
      * @return null if the api hasn't loaded or the group is unknown to us
      */
     public Group getGroupById(String shortId){
-        for (Group group : groups) {
+        for (Group group : groups)
             if (group.getId().equals(shortId))
                 return group;
-        }
         return null;
     }
 
