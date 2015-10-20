@@ -8,9 +8,14 @@ import java.net.URLEncoder;
 
 public class PingPacket {
     private SkypeAPI api;
+    private static boolean forceRelog = false;
 
     public PingPacket(SkypeAPI api) {
         this.api = api;
+    }
+
+    public static void setForceRelog(boolean relog) {
+        forceRelog = relog;
     }
 
     public void doNow() {
@@ -20,10 +25,11 @@ public class PingPacket {
         ping.setData("sessionId=" + api.getUuid().toString());
         ping.setIsForm(true);
         String data = ping.makeRequest();
-        if (data == null || data.equals("---")) {
+        if (data == null || data.equals("---") || forceRelog) {
             api.log("Skype login expired... Reconnecting");
             try {
                 api.login();
+                forceRelog = false;
             }catch(Exception e){
                 api.log("Failed to reconnect. ");
             }

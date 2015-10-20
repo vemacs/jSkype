@@ -3,6 +3,7 @@ package xyz.gghost.jskype.internal.packet;
 import xyz.gghost.jskype.SkypeAPI;
 import lombok.Getter;
 import lombok.Setter;
+import xyz.gghost.jskype.internal.packet.packets.PingPacket;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -67,17 +68,18 @@ public class PacketBuilder {
             if (code == 200 || code == 201) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
+                StringBuilder response = new StringBuilder();
 
                 while ((inputLine = in.readLine()) != null)
                     response.append(inputLine);
 
                 in.close();
-                return response.toString() == null ? "" : response.toString();
+                return response.toString();
 
             } else if (code == 401) {
                 api.log("\n\nBad login...");
                 api.log(this.url + " returned 401. \nHave you been running jSkype for more than 2 days?\nWithin 4 seconds the ping-er should relog you in.\n\n");
+                PingPacket.setForceRelog(true);
                 for (Header header : headers)
                     api.log(header.getType() + ": " + header.getData());
                 return "---";
